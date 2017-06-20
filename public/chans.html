@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 	<meta charset=utf-8 />
+ 	<meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+ 	<title>Sypka Lights</title>
+	<link rel="stylesheet" href="css/style.css?v=2" type="text/css" media="screen" charset="utf-8" />
+	<link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="screen" charset="utf-8" />
+    <script type="text/javascript" src="js/libs/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/libs/jquery-ui.min.js"></script>
+    <!-- TODO needs to be loaded locally -->
+ 	<script type="text/javascript" src="js/main.js?v=5"></script>
+ 	<style>
+  #custom-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    text-align: center;
+    line-height: 1.6em;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  
+  </script>
+</head>
+
+<body>
+	<div id="container">
+		<div id="slider">
+		  <div id="custom-handle" class="ui-slider-handle"></div>
+		</div>
+    <div id="side">STRANY</div>
+    <div id="single">
+      Single
+      <input id="single_enabled" type="checkbox"/>
+      Ch <input id="single_ch" type="number" value="0"/>
+      # <input id="single_count" type="count" value="1"/>
+      <input id="single_plus" type="button" value="+"/>
+      <input id="single_minus" type="button" value="-"/>
+      <input id="single_send" type="button" value="SEND"/>
+    </div>
+	</div>
+</body>
+</html>

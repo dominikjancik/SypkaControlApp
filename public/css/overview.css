@@ -1,0 +1,115 @@
+body, html {
+  background: #eee;
+  padding-bottom: 300px;
+  font-family: Arial, sans-serif; }
+
+input[type="button"] {
+  width: 24%;
+  display: inline-block;
+  height: 3em; }
+
+#container {
+  position: relative;
+  z-index: 300;
+  perspective: 500px;
+  transform-style: preserve-3d; }
+
+.navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 1000;
+  background-color: black;
+  margin: 0;
+  text-align: center; }
+
+.floor {
+  position: fixed;
+  right: 1vw;
+  top: 1vw;
+  z-index: 400;
+  font-size: 5em; }
+
+.fixtureGroup {
+  z-index: 500;
+  width: 20vw;
+  position: absolute;
+  transition: all 100ms;
+  margin-bottom: 20vw; }
+
+.group {
+  background-color: cyan;
+  width: 100%;
+  height: 5vw; }
+
+.fixture {
+  background-color: white;
+  width: 100%;
+  height: 10vw;
+  box-shadow: #eee 0 0 20px inset;
+  transition: all 100ms; }
+  .fixture.selected {
+    box-shadow: cyan 0 0 20px inset;
+    transition: all 100ms; }
+
+.strip {
+  width: 10vw; }
+  .strip .fixture {
+    height: 15vw; }
+
+.circle .fixture {
+  height: 20vw;
+  border-radius: 100%; }
+
+.side {
+  width: 5vw; }
+  .side .fixture {
+    height: 15vw; }
+
+.column {
+  width: 20vw; }
+  .column .fixture {
+    height: 15vw; }
+
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 200px; }
+
+.dimmer-button {
+  display: inline-block;
+  width: 5%;
+  height: 3em;
+  background: #fff;
+  margin: 0;
+  padding: 0; }
+
+#dimmer {
+  width: 90%; }
+
+input[type='range']::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+  background-color: #CCC;
+  height: 80px;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer; }
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: #037cd5;
+  height: 80px;
+  width: 22px;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer; }
+
+input[type='range']::-webkit-slider-thumb:hover {
+  background: #fdd921; }
+
+input[type='range']:active::-webkit-slider-thumb {
+  background: #fdd921; }
+
+/*# sourceMappingURL=overview.css.map */

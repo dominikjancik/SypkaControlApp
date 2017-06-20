@@ -1,0 +1,110 @@
+$(document).ready( function() {	
+	var socket;
+
+	function get_appropriate_ws_url()
+	{
+		var pcol;
+		var u = document.URL;
+		var regex=/https?:\/\/(.+?)(:|\/)/i
+		var match = regex.exec(u);
+
+		/*
+		 * We open the websocket encrypted if this page came on an
+		 * https:// url itself, otherwise unencrypted
+		 */
+
+		if (u.substring(0, 5) == "https") {
+			pcol = "wss://";
+			u = u.substr(8);
+		} else {
+			pcol = "ws://";
+			if (u.substring(0, 4) == "http")
+				u = u.substr(7);
+		}
+
+		u = u.split('/');
+
+		return pcol + match[1] + ":8001";
+	};
+
+	console.log(get_appropriate_ws_url());
+
+
+    socket = new WebSocket( get_appropriate_ws_url());
+	console.log("Set up");
+
+	function sendCommand(name, value) {
+		var command = JSON.stringify({command: name, value: value});
+		socket.send(command);
+	}
+	
+	// open
+	try {
+		socket.onopen = function() {
+			console.log("WS open");
+		} 
+
+		socket.onclose = function(){
+			console.log("WS closed");
+		}
+	} catch(exception) {
+		alert('<p>Error' + exception);  
+	}
+
+
+	var handle = $( "#custom-handle" );
+    $( "#slider" ).slider({
+      min: 0,
+      max: 255,
+      value: 120,
+      create: function() {
+        handle.text( $( this ).slider( "value" ) );
+      },
+      slide: function( event, ui ) {
+        handle.text( ui.value );
+      },
+      change: function( event, ui ) {
+      	console.log( ui.value );
+      	//socket.send( ui.value );
+      	sendCommand( 'value', parseInt( ui.value ) );
+      }
+    });
+
+    $( '#side' ).click(function() {
+    	//socket.send("COM_SIDES");
+    	sendCommand('sides', 'toggle');
+    });
+
+    function sendSingle() {
+    	var value = {
+    		enabled: $('#single_enabled').prop('checked'),
+		    ch: parseInt($('#single_ch').val()),
+		    count: parseInt($('#single_count').val())
+    	};
+
+    	console.log(value);
+
+    	sendCommand( 'single', value );
+    }
+
+    $( '#single_send' ).click(sendSingle);
+    $( '#single_plus' ).click(function() {
+    	var ch = parseInt($('#single_ch').val());
+    	var count = parseInt($('#single_count').val());
+    	ch+=count;
+
+    	$('#single_ch').val(ch);
+
+    	sendSingle();
+    });
+    $( '#single_minus' ).click(function() {
+    	var ch = parseInt($('#single_ch').val());
+    	var count = parseInt($('#single_count').val());
+    	ch-=count;
+
+    	$('#single_ch').val(ch);
+
+    	sendSingle();
+    });
+
+});

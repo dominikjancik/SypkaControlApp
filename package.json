@@ -1,0 +1,20 @@
+{
+  "name": "sypkacontrolapp",
+  "version": "0.1.0",
+  "description": "WebApp + Backend for building lights automation (initiallz via ArtNet)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Dominik Jancik (XYZ project)",
+  "license": "ISC",
+  "dependencies": {
+    "artnet": "^1.2.3",
+    "csv": "^1.1.1",
+    "longjohn": "^0.2.12",
+    "node-static": "^0.7.9",
+    "nodejs-websocket": "^1.7.1",
+    "paperboy": "0.0.5"
+  }
+}
