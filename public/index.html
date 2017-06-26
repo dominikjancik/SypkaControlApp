@@ -3,6 +3,11 @@
 <head>
  	<meta charset=utf-8 />
  	<meta name="viewport" content="width=device-width, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- <meta name="apple-mobile-web-app-status-bar-style" content="black"> -->
+
+
  	<title>Osvětlení Sýpka / XYZ x Lettenmayer</title>
 	<!-- <link rel="stylesheet" href="css/style.css?v=2" type="text/css" media="screen" charset="utf-8" /> -->
   <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="screen" charset="utf-8" />
@@ -23,17 +28,18 @@
 <body>
 	<div id="container">
 	</div>
-  <div class="floor" id="floor">
+  <div class="floorDisplay" id="floor">
     1
   </div>
   <div class="navigation">
     <!-- <input type="range" id="dimmer" step="10" /> -->
     <div class='dimmer'>
     </div>
-    <input type="button" id="reset" value="X"/>
-    <input type="button" id="floor1" value="1"/>
-    <input type="button" id="floor2" value="2"/>
-    <input type="button" id="floor3" value="3"/>
+    <input type="button" class="floor" id="floor1" value="1"/>
+    <input type="button" class="floor" id="floor2" value="2"/>
+    <input type="button" class="floor" id="floor3" value="3"/>
+    <input type="button" class="selection" id="reset" value="X"/>
+    <input type="button" class="selection" id="invert" value="1/0"/>
   </div>
 </body>
 </html>

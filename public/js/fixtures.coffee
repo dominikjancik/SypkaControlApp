@@ -159,16 +159,20 @@ $(document).ready ->
 	selected = -> $('.selected')
 	allFixtures = -> $('.fixture')
 
+	invertSelection = -> $('.fixture').toggleClass 'selected'
+
 	# UI
 	# Set dimmer value, expects values between 0-1, triggers dimmer:change event
 	setDimmer = ( value ) ->
-		fixtures = if selected().length > 0 then selected() else allFixtures()
+		# fixtures = if selected().length > 0 then selected() else allFixtures()
+		fixtures = selected()
 
 		fixtures.fixture('value', value)
 		$(window).trigger 'dimmer:change'# TODO move this to fixtures? (all need to be handled at once though)
 
 
 	$('#reset').click clearSelection
+	$('#invert').click invertSelection
 	$('.dimmer').dimmer()
 	$('#dimmer').change (ev) ->
 		value = ev.target.value

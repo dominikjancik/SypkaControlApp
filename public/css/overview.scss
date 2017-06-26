@@ -3,12 +3,28 @@ body, html {
 	background: #eee;
 	padding-bottom: 300px;
 	font-family: Arial, sans-serif;
+	transform-style: flat;
 }
 
 input[type="button"] {
     width: 24%;
     display: inline-block;
     height: 3em;
+
+    background: rgba(0,0,0,0);
+    color: #fff;
+    border: 0;
+    margin: 0;
+    border-right: 1px #fff solid;
+    border-radius: 0;
+
+    &.floor {
+    	width: 32%;
+    }
+
+    &.selection {
+    	width: 48%;
+    }
 }
 
 #container {
@@ -27,9 +43,12 @@ input[type="button"] {
 	background-color: black;
 	margin: 0;
 	text-align: center;
+	transform-style: flat;
+	transform: translate3d(0,0,100vw);
+	box-shadow: #555 0 0 8px;
 }
 
-.floor {
+.floorDisplay {
 	position: fixed;
 	right: 1vw;
 	top: 1vw;
@@ -113,6 +132,12 @@ input[type='range']  {
 	background: #fff;
 	margin: 0;
 	padding: 0;
+	margin-bottom: -5px;
+}
+
+.dimmer {
+	border-top: 5px white solid;
+	border-bottom: 5px white solid;
 }
 
 #dimmer {

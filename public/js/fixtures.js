@@ -1,6 +1,6 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearSelection, container3d, fixtureGroups, fixture_json_url, getFixtureGroupByName, getIntensityColor, handleMessage, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateOrigin, valuesJSON, values_json_url;
+    var add_fixture, allFixtures, clearSelection, container3d, fixtureGroups, fixture_json_url, getFixtureGroupByName, getIntensityColor, handleMessage, invertSelection, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateOrigin, valuesJSON, values_json_url;
     container3d = $('#container');
     fixtureGroups = [];
     fixture_json_url = function() {
@@ -166,13 +166,17 @@
     allFixtures = function() {
       return $('.fixture');
     };
+    invertSelection = function() {
+      return $('.fixture').toggleClass('selected');
+    };
     setDimmer = function(value) {
       var fixtures;
-      fixtures = selected().length > 0 ? selected() : allFixtures();
+      fixtures = selected();
       fixtures.fixture('value', value);
       return $(window).trigger('dimmer:change');
     };
     $('#reset').click(clearSelection);
+    $('#invert').click(invertSelection);
     $('.dimmer').dimmer();
     $('#dimmer').change(function(ev) {
       var value;

@@ -53,7 +53,7 @@ loadFixtures = ->
 loadValues = ->
   obj = JSON.parse (fs.readFileSync "#{__dirname}/public/values.json", 'utf8').replace(/^\uFEFF/, '')
   console.log 'values loaded'
-  obj.values
+  obj
 
 fixtures = loadFixtures()
 values = loadValues()
@@ -152,10 +152,10 @@ for fixture in fixtures
 updateOutput = ->
   for fixture in fixtures
     artnets[fixture.ip].set 1, ipValues[fixture.ip]
-    console.log fixture.ip
+    # console.log fixture.ip
     # console.log ipValues[fixture.ip]
 
+console.log values
 updateValues values
 initOutput()
 updateOutput()
-  

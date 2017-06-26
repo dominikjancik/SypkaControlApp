@@ -59,7 +59,7 @@
     var obj;
     obj = JSON.parse((fs.readFileSync(__dirname + "/public/values.json", 'utf8')).replace(/^\uFEFF/, ''));
     console.log('values loaded');
-    return obj.values;
+    return obj;
   };
 
   fixtures = loadFixtures();
@@ -202,11 +202,12 @@
     results = [];
     for (l = 0, len1 = fixtures.length; l < len1; l++) {
       fixture = fixtures[l];
-      artnets[fixture.ip].set(1, ipValues[fixture.ip]);
-      results.push(console.log(fixture.ip));
+      results.push(artnets[fixture.ip].set(1, ipValues[fixture.ip]));
     }
     return results;
   };
+
+  console.log(values);
 
   updateValues(values);
 
