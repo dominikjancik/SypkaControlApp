@@ -66,9 +66,10 @@ ipValues = []
 
 getFixture = (name) ->
   # TODO converge values and fixtures JSON files, fixture names as keys
-  for fixture in fixtures
-    if fixture.name == name
-      return fixture
+  fixtures[ name ]
+  #for fixture in fixtures
+  #  if fixture.name == name
+  #    return fixture
   
 
 fixtureCh = (fixture, index) ->
@@ -95,12 +96,15 @@ updateIpValues = ->
   
     if !ipValues[fixture.ip]? then ipValues[fixture.ip] = []
 
-    for value, i in valueArray
-      ch = fixtureCh fixture, i
-      cnt = fixtureChCount fixture
+    i = 0
+    for segment in fixture.segments
+      value = valueArray[i]
+      ch = fixtureCh segment, i
+      cnt = fixtureChCount segment
       for j in [ch...ch+cnt]
         ipValues[fixture.ip][j] = Math.round value * 255
       console.log ipValues[fixture.ip]
+      i++
   
 
 updateValues = ( newValues ) ->
@@ -142,7 +146,7 @@ artnets = []
 i = 0
 
 initOutput = ->
-for fixture in fixtures
+for name, fixture of fixtures
   validatedIp = if fixture.ip? && fixture.ip.length > 0 then fixture.ip else 0
   ip = "192.168.8.#{validatedIp}"
   options.host = ip
@@ -150,7 +154,7 @@ for fixture in fixtures
   artnets[fixture.ip] = require('artnet') options
 
 updateOutput = ->
-  for fixture in fixtures
+  for name, fixture of fixtures
     artnets[fixture.ip].set 1, ipValues[fixture.ip]
     # console.log fixture.ip
     # console.log ipValues[fixture.ip]

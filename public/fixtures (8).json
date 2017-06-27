@@ -15,7 +15,7 @@
           "count": "1",
           "type": "beam",
           "floor": "3",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -34,7 +34,7 @@
           "count": "1",
           "type": "beam",
           "floor": "3",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -53,7 +53,7 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -72,7 +72,7 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -91,7 +91,7 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -110,7 +110,7 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -121,27 +121,15 @@
       "segments": [
         {
           "x": 40,
-          "y": 295,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "1",
-          "type": "side",
-          "floor": "2",
-          "flags": []
-        },
-        {
-          "x": 55,
           "y": 300,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
           "rotZ": 0,
-          "count": "1",
+          "count": "2",
           "type": "side",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -151,28 +139,16 @@
       "group": "B2 - Tramy",
       "segments": [
         {
-          "x": 40,
-          "y": 325,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "2",
-          "type": "side",
-          "floor": "2",
-          "flags": []
-        },
-        {
           "x": 55,
-          "y": 330,
+          "y": 300,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
           "rotZ": 0,
-          "count": "2",
+          "count": "4",
           "type": "side",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -191,7 +167,7 @@
           "count": "1",
           "type": "column",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -210,7 +186,7 @@
           "count": "1",
           "type": "column",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -229,7 +205,7 @@
           "count": "1",
           "type": "column",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -248,7 +224,7 @@
           "count": "12",
           "type": "strip",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -267,7 +243,7 @@
           "count": "14",
           "type": "strip",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -277,8 +253,8 @@
       "group": "B3 - Pruhy",
       "segments": [
         {
-          "x": 10,
-          "y": 200,
+          "x": 30,
+          "y": 220,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -286,7 +262,7 @@
           "count": "4",
           "type": "strip",
           "floor": "3",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -297,45 +273,15 @@
       "segments": [
         {
           "x": 60,
-          "y": 25,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 90,
-          "count": "3",
-          "type": "strip",
-          "floor": "3",
-          "flags": [
-            "start"
-          ]
-        },
-        {
-          "x": 30,
-          "y": 45,
+          "y": 40,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
           "rotZ": 0,
-          "count": "1",
+          "count": "15",
           "type": "strip",
           "floor": "3",
-          "flags": [
-            "turn"
-          ]
-        },
-        {
-          "x": 30,
-          "y": 55,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "11",
-          "type": "strip",
-          "floor": "3",
-          "flags": [
-            "end"
-          ]
+          "flags": {}
         }
       ]
     },
@@ -354,7 +300,7 @@
           "count": "2",
           "type": "column",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -373,7 +319,7 @@
           "count": "2",
           "type": "column",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -392,7 +338,7 @@
           "count": "2",
           "type": "column",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -411,7 +357,7 @@
           "count": "12",
           "type": "strip",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -430,7 +376,7 @@
           "count": "4",
           "type": "strip",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -449,7 +395,7 @@
           "count": "3",
           "type": "strip",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -468,7 +414,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -487,7 +433,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -506,7 +452,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -525,7 +471,7 @@
           "count": "12",
           "type": "strip",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -535,7 +481,7 @@
       "group": "A1 - Boky",
       "segments": [
         {
-          "x": 75,
+          "x": 80,
           "y": 470,
           "z": 5,
           "rotX": 0,
@@ -544,7 +490,7 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -554,7 +500,7 @@
       "group": "A1 - Boky",
       "segments": [
         {
-          "x": 75,
+          "x": 80,
           "y": 415,
           "z": 5,
           "rotX": 0,
@@ -563,7 +509,7 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -573,7 +519,7 @@
       "group": "A1 - Boky",
       "segments": [
         {
-          "x": 75,
+          "x": 80,
           "y": 375,
           "z": 5,
           "rotX": 0,
@@ -582,7 +528,7 @@
           "count": "2",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -592,7 +538,7 @@
       "group": "A1 - Boky",
       "segments": [
         {
-          "x": 20,
+          "x": 15,
           "y": 470,
           "z": 5,
           "rotX": 0,
@@ -601,7 +547,7 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -611,7 +557,7 @@
       "group": "A1 - Boky",
       "segments": [
         {
-          "x": 20,
+          "x": 15,
           "y": 415,
           "z": 5,
           "rotX": 0,
@@ -620,7 +566,7 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -630,7 +576,7 @@
       "group": "A1 - Boky",
       "segments": [
         {
-          "x": 20,
+          "x": 15,
           "y": 360,
           "z": 5,
           "rotX": 0,
@@ -639,7 +585,7 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -658,7 +604,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -669,7 +615,7 @@
       "segments": [
         {
           "x": 40,
-          "y": 460,
+          "y": 440,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -677,7 +623,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -688,7 +634,7 @@
       "segments": [
         {
           "x": 40,
-          "y": 410,
+          "y": 400,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -696,7 +642,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -706,8 +652,8 @@
       "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 65,
-          "y": 530,
+          "x": 55,
+          "y": 480,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -715,7 +661,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
@@ -725,8 +671,8 @@
       "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 15,
-          "y": 530,
+          "x": 25,
+          "y": 480,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -734,7 +680,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     }

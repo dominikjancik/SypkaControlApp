@@ -1,5 +1,5 @@
 (function() {
-  var artnets, fixture, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ip, ipValues, k, len, loadFixtures, loadValues, options, paperboy, path, port, saveValues, server, updateIpValues, updateOutput, updateValues, validatedIp, values, webroot, ws;
+  var artnets, fixture, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ip, ipValues, loadFixtures, loadValues, name, options, paperboy, path, port, saveValues, server, updateIpValues, updateOutput, updateValues, validatedIp, values, webroot, ws;
 
   if (process.env.NODE_ENV !== 'production') {
     require('longjohn');
@@ -77,13 +77,7 @@
   ipValues = [];
 
   getFixture = function(name) {
-    var fixture, k, len;
-    for (k = 0, len = fixtures.length; k < len; k++) {
-      fixture = fixtures[k];
-      if (fixture.name === name) {
-        return fixture;
-      }
-    }
+    return fixtures[name];
   };
 
   fixtureCh = function(fixture, index) {
@@ -114,7 +108,7 @@
   };
 
   updateIpValues = function() {
-    var ch, cnt, fixture, i, j, name, results, value, valueArray;
+    var ch, cnt, fixture, i, j, name, results, segment, value, valueArray;
     results = [];
     for (name in values) {
       valueArray = values[name];
@@ -122,17 +116,21 @@
       if (ipValues[fixture.ip] == null) {
         ipValues[fixture.ip] = [];
       }
+      i = 0;
       results.push((function() {
-        var k, l, len, ref, ref1, results1;
+        var k, l, len, ref, ref1, ref2, results1;
+        ref = fixture.segments;
         results1 = [];
-        for (i = k = 0, len = valueArray.length; k < len; i = ++k) {
+        for (k = 0, len = ref.length; k < len; k++) {
+          segment = ref[k];
           value = valueArray[i];
-          ch = fixtureCh(fixture, i);
-          cnt = fixtureChCount(fixture);
-          for (j = l = ref = ch, ref1 = ch + cnt; ref <= ref1 ? l < ref1 : l > ref1; j = ref <= ref1 ? ++l : --l) {
+          ch = fixtureCh(segment, i);
+          cnt = fixtureChCount(segment);
+          for (j = l = ref1 = ch, ref2 = ch + cnt; ref1 <= ref2 ? l < ref2 : l > ref2; j = ref1 <= ref2 ? ++l : --l) {
             ipValues[fixture.ip][j] = Math.round(value * 255);
           }
-          results1.push(console.log(ipValues[fixture.ip]));
+          console.log(ipValues[fixture.ip]);
+          results1.push(i++);
         }
         return results1;
       })());
@@ -188,8 +186,8 @@
 
   initOutput = function() {};
 
-  for (k = 0, len = fixtures.length; k < len; k++) {
-    fixture = fixtures[k];
+  for (name in fixtures) {
+    fixture = fixtures[name];
     validatedIp = (fixture.ip != null) && fixture.ip.length > 0 ? fixture.ip : 0;
     ip = "192.168.8." + validatedIp;
     options.host = ip;
@@ -198,10 +196,10 @@
   }
 
   updateOutput = function() {
-    var l, len1, results;
+    var results;
     results = [];
-    for (l = 0, len1 = fixtures.length; l < len1; l++) {
-      fixture = fixtures[l];
+    for (name in fixtures) {
+      fixture = fixtures[name];
       results.push(artnets[fixture.ip].set(1, ipValues[fixture.ip]));
     }
     return results;

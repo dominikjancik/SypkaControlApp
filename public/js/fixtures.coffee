@@ -24,7 +24,6 @@ $(document).ready ->
 
 		_createButton: ( index ) ->
 			intensity = 1 / this.options.steps * index
-			console.log intensity
 
 			d = $(document.createElement 'div')
 			d.addClass 'dimmer-button'
@@ -77,35 +76,64 @@ $(document).ready ->
 
 	$.fn.group = (fixture) ->
 		this.addClass 'group'
+		this.data
+			name: fixture.name
 		
 		# this.html(fixture.name).group()
 
 		this.click this, (ev) ->
+			fgs = getFixtureGroupsByName ev.data.data 'name'
+			# fixtures = fgs.children('.fixture')			
+
+			console.log ev.data.data 'name'
+			console.log fgs
+
 			console.log 'group click'
-			hasSelected = ev.data.siblings('.selected').length > 0
+			hasSelected = false
+
+			for fg in fgs
+				if fg.children('.selected').length > 0
+					hasSelected = true
+					break
+				
+			
 			console.log hasSelected
-			ev.data.siblings('.fixture').toggleClass 'selected', !hasSelected
+
+			for fg in fgs
+				fg.children('.fixture').toggleClass 'selected', !hasSelected
+			
+			#hasSelected = ev.data.siblings('.selected').length > 0
+			#console.log hasSelected
+			#ev.data.siblings('.fixture').toggleClass 'selected', !hasSelected
 
 		this
 
-	$.fn.fixtureGroup = (fixture) ->
+	$.fn.fixtureGroup = (fixture, segment) ->
 		console.log this
 
-		settings = $.extend
+		settings = $.extend 
 			x: 0
 			y: 0
 			z: 0
 			rotX: 0
 			rotY: 0
-			rotZ: 0,
-			fixture
+			rotZ: 0
+			flags: [],
+			segment
+		
+		fixtureTopData = getBaseData fixture
+		delete fixtureTopData['segments']
+		settings = $.extend settings, fixtureTopData
+
 
 		this.data(settings)
 
 		this.addClass 'fixtureGroup'
-		this.addClass fixture.type
-		this.addClass 'floor' + fixture.floor
-		this.data fixture
+		this.addClass segment.type
+		for flag in settings.flags
+			this.addClass flag
+		this.addClass 'floor' + segment.floor
+		this.data segment
 
 		this.updateTransform = ->
 			console.log 'update transform'
@@ -134,23 +162,27 @@ $(document).ready ->
 
 
 	add_fixture = (fixture) ->
-		d = document.createElement 'div'
-		fixtureGroups.push $(d).fixtureGroup fixture
+		console.log fixture
+		for segment, i in fixture.segments
+			console.log segment
+			d = document.createElement 'div'
+			console.log "Adding #{fixture.name}"
+			fixtureGroups.push $(d).fixtureGroup fixture, segment
 
-		if fixture.count > 1
-			g = document.createElement 'div'
-			$(g).group()
-			$(d).append g
+			if (segment.count > 1 || fixture.segments.length > 1) && i == 0
+				g = document.createElement 'div'
+				$(g).group fixture
+				$(d).append g
 
-		
-		for i in [0...fixture.count]
-			f = document.createElement 'div'
-			$(f).fixture
-				name: fixture.name
-				index: i
-			d.append(f)
-		
-		$('#container').append(d)
+			
+			for i in [0...segment.count]
+				f = document.createElement 'div'
+				$(f).fixture
+					name: fixture.name
+					index: i
+				d.append(f)
+			
+			$('#container').append(d)
 
 	# $('input[type="range"]').rangeslider
 	# 	onSlide: (position, value) -> console.log 'hello'
@@ -192,30 +224,46 @@ $(document).ready ->
 		$('#floor').html floor
 
 	$.get fixture_json_url(), (data) ->
-		for fixture in data.fixtures
+		console.log "Loading fixtures"
+		console.log data
+		for name, fixture of data.fixtures
+			console.log "loaded #{name}"
 			add_fixture fixture
 
 		showFloor 1
 
-	getFixtureGroupByName = ( name ) ->
+	getFixtureGroupsByName = ( name ) ->
 		console.log 'looking up ' + name
 		fgs = $('.fixtureGroup')
+
+		fixtureGroupsArr = []
+
+		found = false
 		for fixtureGroup in fgs
-			if $(fixtureGroup).data('name') == name then return $(fixtureGroup)
+			console.log $(fixtureGroup).data('name')
+			if $(fixtureGroup).data('name') == name
+				fixtureGroupsArr.push $(fixtureGroup)
+				found = true
+				continue
+			if found then break # Fixtures with same names are expected to be located next to each other
+
+		fixtureGroupsArr
 
 	$.get values_json_url(), (data) ->
 		console.log 'load'
 		console.log data
 		for name, values of data
 			console.log name
-			fg = getFixtureGroupByName name
-			console.log fg
+			fgs = getFixtureGroupsByName name
+			console.log fgs
 			i = 0
-			fg.children('.fixture').each ->
-				# console.log values[i]
-				$(this).fixture('value', values[i]) # TODO move logic to fixtureGroup Widget
-				console.log i
-				i++
+
+			for fg in fgs
+				fg.children('.fixture').each ->
+					# console.log values[i]
+					$(this).fixture('value', values[i]) # TODO move logic to fixtureGroup Widget
+					console.log i
+					i++
 
 			# console.log 'loaded values'
 			# TODO LOAD VALUES INTO FIXTURES			
@@ -234,8 +282,61 @@ $(document).ready ->
 		midY = $(window).height() / 2 + $(window).scrollTop()
 		container3d.css
 			'perspective-origin': "#{midX}px #{midY}px"
+
+	updateNavmap = ->
+		if navlock then return
+
+		mapElem = $('.navmap')
+		posElem = $('.navmap__position')
+
+		topPercent = $(window).scrollTop() / ($(document).height() - $(window).height())
+		top = (mapElem.height() - posElem.height()) * topPercent
+
+		console.log topPercent
+		console.log top
+
+		posElem.css
+			top: "#{top}px"
+
+	navlock = false;
+	navDrag = false;
+
+	navmapMove = (ev) ->
+		if !navDrag then return
+
+		console.log 'click'
+		console.log ev
+
+		mapElem = $('.navmap')
+		posElem = $('.navmap__position')
+		clickY = ev.originalEvent.y - mapElem.position().top
+
+		topPercent = clickY / (mapElem.height() - posElem.height())
+		top = ($(document).height() - $(window).height()) * topPercent
+
+		navlock = true;
+		console.log "scroll to #{top}"
+		$(window).scrollTop top
+		navlock = false;
+
+	navmapDown = (ev) ->
+		navDrag = true
+
+	navmapUp = (ev) ->
+		navDrag = false
+
 	
 	$(window).scroll updateOrigin
+	$(window).scroll updateNavmap
+	
+	$('.navmap').mousemove navmapMove
+	$('.navmap').mousedown navmapDown
+	$('.navmap').mouseup navmapUp
+
+	$('.navmap').on('touchmove', navmapMove)
+	$('.navmap').on('touchstart', navmapDown)
+	$('.navmap').on('touchend', navmapUp)
+
 	updateOrigin()
 
 	translateSelected = (x, y, z) ->
@@ -276,15 +377,38 @@ $(document).ready ->
 	rotateSelectedOnKey 'alt+down', 45, 0, 0
 
 	# JSON output
+	getBaseData = (data) ->
+		ip: data.ip
+		name: data.name
+		group: data.group
+		segments: []
+
+	getSegmentData = (data) ->
+		x: data.x
+		y: data.y
+		z: data.z
+		rotX: data.rotX
+		rotY: data.rotY
+		rotZ: data.rotZ
+		count: data.count
+		type: data.type
+		floor: data.floor
+		flags: data.flags
+
 
 	$(document).bind 'keydown', 'ctrl+s', (ev) ->
 		ev.preventDefault()
 		console.log 'save'
 
-		fixtures = []
+		fixtures = {}
+
+		#$('.fixtureGroup').each (i) ->
+		#	fixtures.push $(this).data()
 
 		$('.fixtureGroup').each (i) ->
-			fixtures.push $(this).data()
+			data = $(this).data()
+			if !fixtures[ data.name ]? then fixtures[ data.name ] = getBaseData data
+			fixtures[ data.name ].segments.push getSegmentData data
 
 		fixturesJSON = JSON.stringify {fixtures: fixtures}, null, 2
 
@@ -303,7 +427,8 @@ $(document).ready ->
 			value = fixtureOptions.value
 
 			if values[ name ] == undefined then values[ name ] = []
-			values[ name ][ index ] = value
+			# values[ name ][ index ] = value
+			values[ name ].push value
 
 			# console.log $(this).fixture('optionsObject').value
 

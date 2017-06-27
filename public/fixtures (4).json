@@ -1,9 +1,7 @@
 ﻿{
   "fixtures": {
     "C3 Tram 2": {
-      "ip": "",
       "name": "C3 Tram 2",
-      "group": "C3 - Tramy",
       "segments": [
         {
           "x": 40,
@@ -15,14 +13,12 @@
           "count": "1",
           "type": "beam",
           "floor": "3",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "C3 Tram 1": {
-      "ip": "",
       "name": "C3 Tram 1",
-      "group": "C3 - Tramy",
       "segments": [
         {
           "x": 40,
@@ -34,14 +30,12 @@
           "count": "1",
           "type": "beam",
           "floor": "3",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "C2 Kruh Park C": {
-      "ip": "24",
       "name": "C2 Kruh Park C",
-      "group": "C2 - Kruhy",
       "segments": [
         {
           "x": 55,
@@ -53,14 +47,12 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "C2 Kruh Park A": {
-      "ip": "23",
       "name": "C2 Kruh Park A",
-      "group": "C2 - Kruhy",
       "segments": [
         {
           "x": 55,
@@ -72,14 +64,12 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "C2 Kruh Dvur C": {
-      "ip": "",
       "name": "C2 Kruh Dvur C",
-      "group": "C2 - Kruhy",
       "segments": [
         {
           "x": 25,
@@ -91,14 +81,12 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "C2 Kruh Dvur A": {
-      "ip": "21",
       "name": "C2 Kruh Dvur A",
-      "group": "C2 - Kruhy",
       "segments": [
         {
           "x": 25,
@@ -110,27 +98,30 @@
           "count": "1",
           "type": "circle",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B2 Tram D3": {
-      "ip": "49",
       "name": "B2 Tram D3",
-      "group": "B2 - Tramy",
       "segments": [
         {
           "x": 40,
-          "y": 295,
+          "y": 300,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
           "rotZ": 0,
-          "count": "1",
+          "count": "2",
           "type": "side",
           "floor": "2",
-          "flags": []
-        },
+          "flags": {}
+        }
+      ]
+    },
+    "B2 Tram D2": {
+      "name": "B2 Tram D2",
+      "segments": [
         {
           "x": 55,
           "y": 300,
@@ -138,48 +129,15 @@
           "rotX": 0,
           "rotY": 0,
           "rotZ": 0,
-          "count": "1",
+          "count": "4",
           "type": "side",
           "floor": "2",
-          "flags": []
-        }
-      ]
-    },
-    "B2 Tram D2": {
-      "ip": "48",
-      "name": "B2 Tram D2",
-      "group": "B2 - Tramy",
-      "segments": [
-        {
-          "x": 40,
-          "y": 325,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "2",
-          "type": "side",
-          "floor": "2",
-          "flags": []
-        },
-        {
-          "x": 55,
-          "y": 330,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "2",
-          "type": "side",
-          "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B2 Sloup Bar": {
-      "ip": "63",
       "name": "B2 Sloup Bar",
-      "group": "B2 - Sloupy do patra",
       "segments": [
         {
           "x": 50,
@@ -191,14 +149,12 @@
           "count": "1",
           "type": "column",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B2 Sloup Stred": {
-      "ip": "62",
       "name": "B2 Sloup Stred",
-      "group": "B2 - Sloupy do patra",
       "segments": [
         {
           "x": 50,
@@ -210,14 +166,12 @@
           "count": "1",
           "type": "column",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B2 Sloup Lod": {
-      "ip": "61",
       "name": "B2 Sloup Lod",
-      "group": "B2 - Sloupy do patra",
       "segments": [
         {
           "x": 50,
@@ -229,14 +183,12 @@
           "count": "1",
           "type": "column",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B2 Pruh Park": {
-      "ip": "35",
       "name": "B2 Pruh Park",
-      "group": "B2 - Pruhy",
       "segments": [
         {
           "x": 70,
@@ -248,14 +200,12 @@
           "count": "12",
           "type": "strip",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B2 Pruh Dvur": {
-      "ip": "36",
       "name": "B2 Pruh Dvur",
-      "group": "B2 - Pruhy",
       "segments": [
         {
           "x": 20,
@@ -267,18 +217,16 @@
           "count": "14",
           "type": "strip",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B3 Pruh Zed": {
-      "ip": "34",
       "name": "B3 Pruh Zed",
-      "group": "B3 - Pruhy",
       "segments": [
         {
-          "x": 10,
-          "y": 200,
+          "x": 30,
+          "y": 220,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -286,63 +234,29 @@
           "count": "4",
           "type": "strip",
           "floor": "3",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B3 Pruh Zatacka": {
-      "ip": "38",
       "name": "B3 Pruh Zatacka",
-      "group": "B3 - Pruhy",
       "segments": [
         {
           "x": 60,
-          "y": 25,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 90,
-          "count": "3",
-          "type": "strip",
-          "floor": "3",
-          "flags": [
-            "start"
-          ]
-        },
-        {
-          "x": 30,
-          "y": 45,
+          "y": 40,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
           "rotZ": 0,
-          "count": "1",
+          "count": "15",
           "type": "strip",
           "floor": "3",
-          "flags": [
-            "turn"
-          ]
-        },
-        {
-          "x": 30,
-          "y": 55,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "11",
-          "type": "strip",
-          "floor": "3",
-          "flags": [
-            "end"
-          ]
+          "flags": {}
         }
       ]
     },
     "B1 Sloup Bar": {
-      "ip": "66",
       "name": "B1 Sloup Bar",
-      "group": "B1 - Sloupy do pruhledu",
       "segments": [
         {
           "x": 35,
@@ -354,14 +268,12 @@
           "count": "2",
           "type": "column",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Sloup Stred": {
-      "ip": "65",
       "name": "B1 Sloup Stred",
-      "group": "B1 - Sloupy do pruhledu",
       "segments": [
         {
           "x": 35,
@@ -373,14 +285,12 @@
           "count": "2",
           "type": "column",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Sloup Lod": {
-      "ip": "64",
       "name": "B1 Sloup Lod",
-      "group": "B1 - Sloupy do pruhledu",
       "segments": [
         {
           "x": 35,
@@ -392,14 +302,12 @@
           "count": "2",
           "type": "column",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Pruh Park": {
-      "ip": "33",
       "name": "B1 Pruh Park",
-      "group": "B1 - Pruhy",
       "segments": [
         {
           "x": 70,
@@ -411,14 +319,12 @@
           "count": "12",
           "type": "strip",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Pruh Dvur Vstup": {
-      "ip": "32",
       "name": "B1 Pruh Dvur Vstup",
-      "group": "B1 - Pruhy",
       "segments": [
         {
           "x": 20,
@@ -430,14 +336,12 @@
           "count": "4",
           "type": "strip",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Pruh Dvur Bar": {
-      "ip": "37",
       "name": "B1 Pruh Dvur Bar",
-      "group": "B1 - Pruhy",
       "segments": [
         {
           "x": 20,
@@ -449,14 +353,12 @@
           "count": "3",
           "type": "strip",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Kruh Park Pravy": {
-      "ip": "46",
       "name": "B1 Kruh Park Pravy",
-      "group": "B1 - Kruhy vstup",
       "segments": [
         {
           "x": 60,
@@ -468,14 +370,12 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Kruh Park Levy": {
-      "ip": "43",
       "name": "B1 Kruh Park Levy",
-      "group": "B1 - Kruhy vstup",
       "segments": [
         {
           "x": 60,
@@ -487,14 +387,12 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "B1 Kruh Dvur": {
-      "ip": "42",
       "name": "B1 Kruh Dvur",
-      "group": "B1 - Kruhy vstup",
       "segments": [
         {
           "x": 20,
@@ -506,14 +404,12 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A2 Pruh": {
-      "ip": "31",
       "name": "A2 Pruh",
-      "group": "A2 - Pruh",
       "segments": [
         {
           "x": 45,
@@ -525,17 +421,15 @@
           "count": "12",
           "type": "strip",
           "floor": "2",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Bok Park 3": {
-      "ip": "56",
       "name": "A1 Bok Park 3",
-      "group": "A1 - Boky",
       "segments": [
         {
-          "x": 75,
+          "x": 80,
           "y": 470,
           "z": 5,
           "rotX": 0,
@@ -544,17 +438,15 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Bok Park 2": {
-      "ip": "55",
       "name": "A1 Bok Park 2",
-      "group": "A1 - Boky",
       "segments": [
         {
-          "x": 75,
+          "x": 80,
           "y": 415,
           "z": 5,
           "rotX": 0,
@@ -563,17 +455,15 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Bok Park 1": {
-      "ip": "54",
       "name": "A1 Bok Park 1",
-      "group": "A1 - Boky",
       "segments": [
         {
-          "x": 75,
+          "x": 80,
           "y": 375,
           "z": 5,
           "rotX": 0,
@@ -582,17 +472,15 @@
           "count": "2",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Bok Dvur 3": {
-      "ip": "53",
       "name": "A1 Bok Dvur 3",
-      "group": "A1 - Boky",
       "segments": [
         {
-          "x": 20,
+          "x": 15,
           "y": 470,
           "z": 5,
           "rotX": 0,
@@ -601,17 +489,15 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Bok Dvur 2": {
-      "ip": "52",
       "name": "A1 Bok Dvur 2",
-      "group": "A1 - Boky",
       "segments": [
         {
-          "x": 20,
+          "x": 15,
           "y": 415,
           "z": 5,
           "rotX": 0,
@@ -620,17 +506,15 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Bok Dvur 1": {
-      "ip": "51",
       "name": "A1 Bok Dvur 1",
-      "group": "A1 - Boky",
       "segments": [
         {
-          "x": 20,
+          "x": 15,
           "y": 360,
           "z": 5,
           "rotX": 0,
@@ -639,14 +523,12 @@
           "count": "3",
           "type": "side",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Kruh 3/4": {
-      "ip": "41",
       "name": "A1 Kruh 3/4",
-      "group": "A1 - Kruhy",
       "segments": [
         {
           "x": 40,
@@ -658,18 +540,16 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Kruh Velky Schody": {
-      "ip": "44",
       "name": "A1 Kruh Velky Schody",
-      "group": "A1 - Kruhy",
       "segments": [
         {
           "x": 40,
-          "y": 460,
+          "y": 440,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -677,18 +557,16 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Kruh Velky Stred": {
-      "ip": "45",
       "name": "A1 Kruh Velky Stred",
-      "group": "A1 - Kruhy",
       "segments": [
         {
           "x": 40,
-          "y": 410,
+          "y": 400,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -696,18 +574,16 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Kruh Maly Park": {
-      "ip": "39",
       "name": "A1 Kruh Maly Park",
-      "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 65,
-          "y": 530,
+          "x": 55,
+          "y": 480,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -715,18 +591,16 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     },
     "A1 Kruh Maly Dvur": {
-      "ip": "47",
       "name": "A1 Kruh Maly Dvur",
-      "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 15,
-          "y": 530,
+          "x": 25,
+          "y": 480,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -734,7 +608,7 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": {}
         }
       ]
     }
