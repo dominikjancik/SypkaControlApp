@@ -89,6 +89,26 @@ fixtureChCount = (fixture) ->
       console.log "Unknown type - #{fixture.type}"
       return 3
 
+processValue = (segment, ch, value) ->
+  if !mode
+    if segment.type == 'column' then return Math.min value, 0.5
+    return value
+
+  # console.log segment.type
+  # console.log ch
+
+  switch segment.type
+    when 'strip'
+      return (if (((ch - 1) %% 3) != 0) then value else 0)
+    when 'column'
+      return (if ((ch %% 6) == 0 || (ch %% 6) == 5) then value else 0)
+    when 'side', 'beam'
+      return (if ((ch %% 6) == 3 || (ch %% 6) == 2) then value else 0)
+    when 'circle'
+      return (if (ch == 1) then value else 0)
+
+  return value
+
 
 updateIpValues = ->
   for name, valueArray of values
@@ -97,14 +117,16 @@ updateIpValues = ->
     if !ipValues[fixture.ip]? then ipValues[fixture.ip] = []
 
     i = 0
+    # console.log fixture.name
     for segment in fixture.segments
-      value = valueArray[i]
-      ch = fixtureCh segment, i
-      cnt = fixtureChCount segment
-      for j in [ch...ch+cnt]
-        ipValues[fixture.ip][j] = Math.round value * 255
-      console.log ipValues[fixture.ip]
-      i++
+      for segI in [0...segment.count]
+        value = valueArray[i]
+        ch = fixtureCh segment, i
+        cnt = fixtureChCount segment
+        for j in [ch...ch+cnt]
+          ipValues[fixture.ip][j] = Math.round processValue(segment, j, value) * 255
+        console.log ipValues[fixture.ip]
+        i++
   
 
 updateValues = ( newValues ) ->
@@ -114,6 +136,10 @@ updateValues = ( newValues ) ->
   updateOutput()
   saveValues()
 
+mode = false # TODO multiple modes
+switchMode = ->
+  console.log 'switching mode'
+  mode = !mode
 
 ### WS HANDLER ###
 
@@ -128,6 +154,9 @@ server = ws.createServer((conn) ->
       switch command.command
         when 'values'
           updateValues command.values
+        when 'mode'
+          switchMode()
+          updateValues values
     catch err
       console.log 'Failed parsing command: ' + err
     return
@@ -155,6 +184,7 @@ for name, fixture of fixtures
 
 updateOutput = ->
   for name, fixture of fixtures
+    console.log fixture.name
     artnets[fixture.ip].set 1, ipValues[fixture.ip]
     # console.log fixture.ip
     # console.log ipValues[fixture.ip]

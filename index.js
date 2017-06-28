@@ -1,5 +1,6 @@
 (function() {
-  var artnets, fixture, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ip, ipValues, loadFixtures, loadValues, name, options, paperboy, path, port, saveValues, server, updateIpValues, updateOutput, updateValues, validatedIp, values, webroot, ws;
+  var artnets, fixture, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ip, ipValues, loadFixtures, loadValues, mode, name, options, paperboy, path, port, processValue, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, validatedIp, values, webroot, ws,
+    modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
     require('longjohn');
@@ -107,8 +108,29 @@
     }
   };
 
+  processValue = function(segment, ch, value) {
+    if (!mode) {
+      if (segment.type === 'column') {
+        return Math.min(value, 0.5);
+      }
+      return value;
+    }
+    switch (segment.type) {
+      case 'strip':
+        return ((modulo(ch - 1, 3)) !== 0 ? value : 0);
+      case 'column':
+        return ((modulo(ch, 6)) === 0 || (modulo(ch, 6)) === 5 ? value : 0);
+      case 'side':
+      case 'beam':
+        return ((modulo(ch, 6)) === 3 || (modulo(ch, 6)) === 2 ? value : 0);
+      case 'circle':
+        return (ch === 1 ? value : 0);
+    }
+    return value;
+  };
+
   updateIpValues = function() {
-    var ch, cnt, fixture, i, j, name, results, segment, value, valueArray;
+    var ch, cnt, fixture, i, j, name, results, segI, segment, value, valueArray;
     results = [];
     for (name in values) {
       valueArray = values[name];
@@ -118,19 +140,26 @@
       }
       i = 0;
       results.push((function() {
-        var k, l, len, ref, ref1, ref2, results1;
+        var k, len, ref, results1;
         ref = fixture.segments;
         results1 = [];
         for (k = 0, len = ref.length; k < len; k++) {
           segment = ref[k];
-          value = valueArray[i];
-          ch = fixtureCh(segment, i);
-          cnt = fixtureChCount(segment);
-          for (j = l = ref1 = ch, ref2 = ch + cnt; ref1 <= ref2 ? l < ref2 : l > ref2; j = ref1 <= ref2 ? ++l : --l) {
-            ipValues[fixture.ip][j] = Math.round(value * 255);
-          }
-          console.log(ipValues[fixture.ip]);
-          results1.push(i++);
+          results1.push((function() {
+            var l, m, ref1, ref2, ref3, results2;
+            results2 = [];
+            for (segI = l = 0, ref1 = segment.count; 0 <= ref1 ? l < ref1 : l > ref1; segI = 0 <= ref1 ? ++l : --l) {
+              value = valueArray[i];
+              ch = fixtureCh(segment, i);
+              cnt = fixtureChCount(segment);
+              for (j = m = ref2 = ch, ref3 = ch + cnt; ref2 <= ref3 ? m < ref3 : m > ref3; j = ref2 <= ref3 ? ++m : --m) {
+                ipValues[fixture.ip][j] = Math.round(processValue(segment, j, value) * 255);
+              }
+              console.log(ipValues[fixture.ip]);
+              results2.push(i++);
+            }
+            return results2;
+          })());
         }
         return results1;
       })());
@@ -144,6 +173,13 @@
     updateIpValues();
     updateOutput();
     return saveValues();
+  };
+
+  mode = false;
+
+  switchMode = function() {
+    console.log('switching mode');
+    return mode = !mode;
   };
 
 
@@ -161,6 +197,10 @@
         switch (command.command) {
           case 'values':
             updateValues(command.values);
+            break;
+          case 'mode':
+            switchMode();
+            updateValues(values);
         }
       } catch (error) {
         err = error;
@@ -200,6 +240,7 @@
     results = [];
     for (name in fixtures) {
       fixture = fixtures[name];
+      console.log(fixture.name);
       results.push(artnets[fixture.ip].set(1, ipValues[fixture.ip]));
     }
     return results;

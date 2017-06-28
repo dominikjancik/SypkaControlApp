@@ -1,10 +1,10 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearSelection, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, invertSelection, navDrag, navlock, navmapDown, navmapMove, navmapUp, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url;
+    var add_fixture, allFixtures, clearSelection, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, invertSelection, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url;
     container3d = $('#container');
     fixtureGroups = [];
     fixture_json_url = function() {
-      return 'fixtures.json';
+      return 'fixtures.json?t=' + (new Date()).getTime();
     };
     values_json_url = function() {
       return 'values.json?t=' + (new Date()).getTime();
@@ -321,9 +321,6 @@
     navDrag = false;
     navmapMove = function(ev) {
       var clickY, mapElem, posElem, top, topPercent;
-      if (!navDrag) {
-        return;
-      }
       console.log('click');
       console.log(ev);
       mapElem = $('.navmap');
@@ -336,6 +333,11 @@
       $(window).scrollTop(top);
       return navlock = false;
     };
+    navmapClick = function(ev) {
+      navmapDown(ev);
+      navmapMove(ev);
+      return navmapUp(ev);
+    };
     navmapDown = function(ev) {
       return navDrag = true;
     };
@@ -344,12 +346,7 @@
     };
     $(window).scroll(updateOrigin);
     $(window).scroll(updateNavmap);
-    $('.navmap').mousemove(navmapMove);
-    $('.navmap').mousedown(navmapDown);
-    $('.navmap').mouseup(navmapUp);
-    $('.navmap').on('touchmove', navmapMove);
-    $('.navmap').on('touchstart', navmapDown);
-    $('.navmap').on('touchend', navmapUp);
+    $('.navmap').click(navmapMove);
     updateOrigin();
     translateSelected = function(x, y, z) {
       var fg, j, len, results;
@@ -489,9 +486,14 @@
     window.ws.init({
       onmessage: handleMessage
     });
-    return $(window).on('dimmer:change', function() {
+    $(window).on('dimmer:change', function() {
       console.log('Sending new values');
       return window.ws.send(valuesJSON());
+    });
+    return $("#mode").click(function() {
+      return window.ws.send(JSON.stringify({
+        command: 'mode'
+      }));
     });
   });
 

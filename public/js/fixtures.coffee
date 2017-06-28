@@ -4,7 +4,7 @@ $(document).ready ->
 	fixtureGroups = []
 
 	fixture_json_url = ->
-		'fixtures.json'
+		'fixtures.json?t=' + (new Date()).getTime()
 
 	values_json_url = ->
 		'values.json?t=' + (new Date()).getTime()
@@ -302,7 +302,7 @@ $(document).ready ->
 	navDrag = false;
 
 	navmapMove = (ev) ->
-		if !navDrag then return
+		# if !navDrag then return
 
 		console.log 'click'
 		console.log ev
@@ -319,6 +319,11 @@ $(document).ready ->
 		$(window).scrollTop top
 		navlock = false;
 
+	navmapClick = (ev) ->
+		navmapDown(ev)
+		navmapMove(ev)
+		navmapUp(ev)
+
 	navmapDown = (ev) ->
 		navDrag = true
 
@@ -329,13 +334,14 @@ $(document).ready ->
 	$(window).scroll updateOrigin
 	$(window).scroll updateNavmap
 	
-	$('.navmap').mousemove navmapMove
-	$('.navmap').mousedown navmapDown
-	$('.navmap').mouseup navmapUp
+	# $('.navmap').mousemove navmapMove
+	# $('.navmap').mousedown navmapDown
+	# $('.navmap').mouseup navmapUp
 
-	$('.navmap').on('touchmove', navmapMove)
-	$('.navmap').on('touchstart', navmapDown)
-	$('.navmap').on('touchend', navmapUp)
+	# $('.navmap').on('touchmove', navmapMove)
+	# $('.navmap').on('touchstart', navmapDown)
+	# $('.navmap').on('touchend', navmapUp)
+	$('.navmap').click navmapMove
 
 	updateOrigin()
 
@@ -456,6 +462,10 @@ $(document).ready ->
 	$(window).on 'dimmer:change', ->
 		console.log 'Sending new values'
 		window.ws.send valuesJSON()
+
+	$("#mode").click ->
+		window.ws.send JSON.stringify
+			command: 'mode'
 
 
 

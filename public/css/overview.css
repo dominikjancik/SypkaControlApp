@@ -17,7 +17,7 @@ input[type="button"] {
   input[type="button"].floor {
     width: 32%; }
   input[type="button"].selection {
-    width: 48%; }
+    width: 32%; }
 
 .navmap {
   width: 10vw;
