@@ -85,6 +85,7 @@ fixtureChCount = (fixture) ->
     when 'column', 'side', 'beam' then return 6
     when 'beam' then return 1
     when 'circle' then return 2
+    when 'elevator' then return 1
     else
       console.log "Unknown type - #{fixture.type}"
       return 3

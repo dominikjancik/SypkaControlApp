@@ -98,6 +98,18 @@ input[type="button"] {
 .circle .fixture {
   height: 20vw;
   border-radius: 100%; }
+.circle.large .fixture {
+  height: 30vw;
+  width: 30vw; }
+.circle.cutout .fixture:after {
+  content: ' ';
+  width: 15vw;
+  height: 50%;
+  position: absolute;
+  top: 0;
+  left: 15vw;
+  background: #eee;
+  border-bottom-left-radius: 1vw; }
 
 .side {
   width: 5vw; }
@@ -108,6 +120,10 @@ input[type="button"] {
   width: 20vw; }
   .column .fixture {
     height: 15vw; }
+
+.elevator .fixture {
+  width: 20vw;
+  height: 20vw; }
 
 input[type='range'] {
   -webkit-appearance: none;

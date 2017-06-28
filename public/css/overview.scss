@@ -1,6 +1,8 @@
+$background-color: #eee;
+
 body, html {
 	//background: #555;	
-	background: #eee;
+	background: $background-color;
 	padding-bottom: 300px;
 	font-family: Arial, sans-serif;
 	transform-style: flat;
@@ -133,6 +135,26 @@ input[type="button"] {
 		height: 20vw;
 		border-radius: 100%;
 	}
+
+	&.large {
+		.fixture {
+			height: 30vw;
+			width: 30vw;
+		}
+	}
+
+	&.cutout {
+		.fixture:after {
+			content: ' ';
+			width: 15vw;
+			height: 50%;
+			position: absolute;
+			top: 0;
+			left: 15vw;
+			background: $background-color;
+			border-bottom-left-radius: 1vw;
+		}
+	}
 }
 
 .side {
@@ -148,6 +170,13 @@ input[type="button"] {
 	.fixture {
 		height: 15vw;
 	}	
+}
+
+.elevator {
+	.fixture {
+		width: 20vw;
+		height: 20vw;
+	}
 }
 
 input[type='range']  {

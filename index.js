@@ -102,6 +102,8 @@
         return 1;
       case 'circle':
         return 2;
+      case 'elevator':
+        return 1;
       default:
         console.log("Unknown type - " + fixture.type);
         return 3;

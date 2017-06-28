@@ -120,7 +120,7 @@
       "group": "B2 - Tramy",
       "segments": [
         {
-          "x": 40,
+          "x": 55,
           "y": 295,
           "z": 0,
           "rotX": 0,
@@ -132,7 +132,7 @@
           "flags": []
         },
         {
-          "x": 55,
+          "x": 70,
           "y": 300,
           "z": 0,
           "rotX": 0,
@@ -151,7 +151,7 @@
       "group": "B2 - Tramy",
       "segments": [
         {
-          "x": 40,
+          "x": 55,
           "y": 325,
           "z": 0,
           "rotX": 0,
@@ -163,7 +163,7 @@
           "flags": []
         },
         {
-          "x": 55,
+          "x": 70,
           "y": 330,
           "z": 0,
           "rotX": 0,
@@ -460,7 +460,7 @@
       "segments": [
         {
           "x": 60,
-          "y": 315,
+          "y": 325,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -479,7 +479,7 @@
       "segments": [
         {
           "x": 60,
-          "y": 265,
+          "y": 285,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -498,7 +498,7 @@
       "segments": [
         {
           "x": 20,
-          "y": 290,
+          "y": 305,
           "z": 0,
           "rotX": 0,
           "rotY": 0,
@@ -649,7 +649,7 @@
       "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 40,
+          "x": 35,
           "y": 360,
           "z": 0,
           "rotX": 0,
@@ -658,7 +658,10 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": [
+            "large",
+            "cutout"
+          ]
         }
       ]
     },
@@ -668,7 +671,7 @@
       "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 40,
+          "x": 35,
           "y": 460,
           "z": 0,
           "rotX": 0,
@@ -677,7 +680,9 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": [
+            "large"
+          ]
         }
       ]
     },
@@ -687,7 +692,7 @@
       "group": "A1 - Kruhy",
       "segments": [
         {
-          "x": 40,
+          "x": 35,
           "y": 410,
           "z": 0,
           "rotX": 0,
@@ -696,7 +701,9 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
+          "flags": [
+            "large"
+          ]
         }
       ]
     },
@@ -734,6 +741,25 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
+          "flags": []
+        }
+      ]
+    },
+    "Vytah": {
+      "ip": "40",
+      "name": "Vytah",
+      "group": "Vytah",
+      "segments": [
+        {
+          "x": 30,
+          "y": 280,
+          "z": 0,
+          "rotX": 0,
+          "rotY": 0,
+          "rotZ": 0,
+          "count": "1",
+          "type": "elevator",
+          "floor": "all",
           "flags": []
         }
       ]
