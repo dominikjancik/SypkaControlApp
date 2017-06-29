@@ -1,6 +1,6 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearSelection, connectInterval, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnection, invertSelection, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url;
+    var add_fixture, allFixtures, clearConnectInterval, clearPingInterval, clearSelection, connectInterval, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initPingInterval, invertSelection, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
     container3d = $('#container');
     fixtureGroups = [];
     fixture_json_url = function() {
@@ -473,24 +473,80 @@
       return saveAs(blob, 'values.json');
     });
     handleMessage = function(ev) {
-      return console.log('Handling WS message');
+      console.log('Handling WS message');
+      switch (JSON.parse(ev.data).command) {
+        case 'pong':
+          return wsPongReceived();
+      }
     };
     connectInterval = void 0;
+    initConnectInterval = function() {
+      if (connectInterval == null) {
+        return connectInterval = window.setInterval(initConnection, 2000);
+      }
+    };
+    clearConnectInterval = function() {
+      window.clearInterval(connectInterval);
+      return connectInterval = void 0;
+    };
+    pingInterval = void 0;
+    pingReceived = false;
+    wsPingHandle = function() {
+      if (pingReceived) {
+        wsPongReceived();
+        return true;
+      } else {
+        window.ws.socket.close();
+        clearPingInterval();
+        initConnectInterval();
+        return false;
+      }
+    };
+    clearPingInterval = function() {
+      var PingInterval;
+      console.log('Ping Timeout Clear');
+      window.clearInterval(PingInterval);
+      return PingInterval = void 0;
+    };
+    pingSent = false;
+    initPingInterval = function() {
+      console.log('Ping Interval');
+      pingSent = false;
+      if (pingInterval == null) {
+        return pingInterval = window.setInterval(wsPing, 5000);
+      }
+    };
+    wsPongReceived = function() {
+      console.log('Pong Received');
+      return pingReceived = true;
+    };
+    wsPing = function() {
+      if (pingSent) {
+        if (!wsPingHandle()) {
+          return;
+        }
+      }
+      console.log('Ping');
+      pingReceived = false;
+      window.ws.send(JSON.stringify({
+        command: 'ping'
+      }));
+      return pingSent = true;
+    };
     initConnection = function() {
       return window.ws.init({
         onmessage: handleMessage,
         onopen: function() {
           console.log('connected');
           $('.overlay').hide();
-          window.clearInterval(connectInterval);
-          return connectInterval = void 0;
+          initPingInterval();
+          return clearConnectInterval();
         },
         onclose: function() {
           console.log('disconnected');
           $('.overlay').show();
-          if (connectInterval == null) {
-            return connectInterval = window.setInterval(initConnection, 2000);
-          }
+          clearPingInterval();
+          return initConnectInterval();
         }
       });
     };

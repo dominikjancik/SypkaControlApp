@@ -455,22 +455,71 @@ $(document).ready ->
 	# WS Communication
 	handleMessage = (ev) ->
 		console.log 'Handling WS message'
+		switch JSON.parse(ev.data).command
+			when 'pong' then wsPongReceived()
 
 
 	connectInterval = undefined
 	
+	initConnectInterval = ->
+		if !connectInterval? then connectInterval = window.setInterval initConnection, 2000
+
+	clearConnectInterval = ->
+		window.clearInterval connectInterval
+		connectInterval = undefined
+
+	pingInterval = undefined
+	pingReceived = false
+
+	wsPingHandle = ->
+		if pingReceived
+			wsPongReceived()
+			return true
+		else # Ping failed
+			window.ws.socket.close()
+			clearPingInterval()
+			initConnectInterval()
+			return false
+
+	clearPingInterval = ->
+		console.log 'Ping Timeout Clear'
+		window.clearInterval PingInterval
+		PingInterval = undefined
+
+	pingSent = false;
+
+	initPingInterval = ->
+		console.log 'Ping Interval'
+		pingSent = false
+		if !pingInterval? then pingInterval = window.setInterval wsPing, 5000
+
+	wsPongReceived = ->
+		console.log 'Pong Received'
+		pingReceived = true
+
+	wsPing = ->
+		if pingSent then if !wsPingHandle() then return
+
+		console.log 'Ping'
+		pingReceived = false
+		window.ws.send JSON.stringify
+			command: 'ping'
+		pingSent = true
+
 	initConnection = ->
 		window.ws.init
 			onmessage: handleMessage
 			onopen: ->
 				console.log 'connected'
 				$('.overlay').hide()
-				window.clearInterval connectInterval
-				connectInterval = undefined
+				initPingInterval()
+				clearConnectInterval()
+				
 			onclose: ->
 				console.log 'disconnected'
 				$('.overlay').show()
-				if !connectInterval? then connectInterval = window.setInterval initConnection, 2000
+				clearPingInterval()
+				initConnectInterval()
 
 	initConnection()
 

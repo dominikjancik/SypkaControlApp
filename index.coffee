@@ -153,6 +153,9 @@ server = ws.createServer((conn) ->
     try
       command = JSON.parse(str)
       switch command.command
+        when 'ping'
+          conn.sendText JSON.stringify
+            command: 'pong'
         when 'values'
           updateValues command.values
         when 'mode'

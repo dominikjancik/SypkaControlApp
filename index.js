@@ -197,6 +197,11 @@
       try {
         command = JSON.parse(str);
         switch (command.command) {
+          case 'ping':
+            conn.sendText(JSON.stringify({
+              command: 'pong'
+            }));
+            break;
           case 'values':
             updateValues(command.values);
             break;
