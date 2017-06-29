@@ -109,7 +109,7 @@ $(document).ready ->
 		this
 
 	$.fn.fixtureGroup = (fixture, segment) ->
-		console.log this
+		# console.log this
 
 		settings = $.extend 
 			x: 0
@@ -136,8 +136,8 @@ $(document).ready ->
 		this.data segment
 
 		this.updateTransform = ->
-			console.log 'update transform'
-			console.log this.data()
+			# console.log 'update transform'
+			# console.log this.data()
 			this.css
 				transform: "translate3d(#{this.data().x}vw, #{this.data().y}vw, #{this.data().z}vw) rotateX(#{this.data().rotX}deg) rotateY(#{this.data().rotY}deg) rotateZ(#{this.data().rotZ}deg)"
 
@@ -162,11 +162,11 @@ $(document).ready ->
 
 
 	add_fixture = (fixture) ->
-		console.log fixture
+		# console.log fixture
 		for segment, i in fixture.segments
-			console.log segment
+			# console.log segment
 			d = document.createElement 'div'
-			console.log "Adding #{fixture.name}"
+			# console.log "Adding #{fixture.name}"
 			fixtureGroups.push $(d).fixtureGroup fixture, segment
 
 			if (segment.count > 1 || fixture.segments.length > 1) && i == 0
@@ -233,14 +233,14 @@ $(document).ready ->
 		showFloor 1
 
 	getFixtureGroupsByName = ( name ) ->
-		console.log 'looking up ' + name
+		# console.log 'looking up ' + name
 		fgs = $('.fixtureGroup')
 
 		fixtureGroupsArr = []
 
 		found = false
 		for fixtureGroup in fgs
-			console.log $(fixtureGroup).data('name')
+			# console.log $(fixtureGroup).data('name')
 			if $(fixtureGroup).data('name') == name
 				fixtureGroupsArr.push $(fixtureGroup)
 				found = true
@@ -456,8 +456,24 @@ $(document).ready ->
 	handleMessage = (ev) ->
 		console.log 'Handling WS message'
 
-	window.ws.init
-		onmessage: handleMessage
+
+	connectInterval = undefined
+	
+	initConnection = ->
+		window.ws.init
+			onmessage: handleMessage
+			onopen: ->
+				console.log 'connected'
+				$('.overlay').hide()
+				window.clearInterval connectInterval
+				connectInterval = undefined
+			onclose: ->
+				console.log 'disconnected'
+				$('.overlay').show()
+				if !connectInterval? then connectInterval = window.setInterval initConnection, 2000
+
+	initConnection()
+
 
 	$(window).on 'dimmer:change', ->
 		console.log 'Sending new values'

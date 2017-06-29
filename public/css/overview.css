@@ -170,4 +170,14 @@ input[type='range']::-webkit-slider-thumb:hover {
 input[type='range']:active::-webkit-slider-thumb {
   background: #fdd921; }
 
+.overlay {
+  z-index: 5000;
+  transform: translate3d(0, 0, 1000vw);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0; }
+
 /*# sourceMappingURL=overview.css.map */

@@ -1,6 +1,6 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearSelection, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, invertSelection, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url;
+    var add_fixture, allFixtures, clearSelection, connectInterval, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnection, invertSelection, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url;
     container3d = $('#container');
     fixtureGroups = [];
     fixture_json_url = function() {
@@ -110,7 +110,6 @@
     };
     $.fn.fixtureGroup = function(fixture, segment) {
       var fixtureTopData, flag, j, len, ref, settings;
-      console.log(this);
       settings = $.extend({
         x: 0,
         y: 0,
@@ -134,8 +133,6 @@
       this.addClass('floor' + segment.floor);
       this.data(segment);
       this.updateTransform = function() {
-        console.log('update transform');
-        console.log(this.data());
         return this.css({
           transform: "translate3d(" + (this.data().x) + "vw, " + (this.data().y) + "vw, " + (this.data().z) + "vw) rotateX(" + (this.data().rotX) + "deg) rotateY(" + (this.data().rotY) + "deg) rotateZ(" + (this.data().rotZ) + "deg)"
         });
@@ -166,14 +163,11 @@
     };
     add_fixture = function(fixture) {
       var d, f, g, i, j, k, len, ref, ref1, results, segment;
-      console.log(fixture);
       ref = fixture.segments;
       results = [];
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         segment = ref[i];
-        console.log(segment);
         d = document.createElement('div');
-        console.log("Adding " + fixture.name);
         fixtureGroups.push($(d).fixtureGroup(fixture, segment));
         if ((segment.count > 1 || fixture.segments.length > 1) && i === 0) {
           g = document.createElement('div');
@@ -240,13 +234,11 @@
     });
     getFixtureGroupsByName = function(name) {
       var fgs, fixtureGroup, fixtureGroupsArr, found, j, len;
-      console.log('looking up ' + name);
       fgs = $('.fixtureGroup');
       fixtureGroupsArr = [];
       found = false;
       for (j = 0, len = fgs.length; j < len; j++) {
         fixtureGroup = fgs[j];
-        console.log($(fixtureGroup).data('name'));
         if ($(fixtureGroup).data('name') === name) {
           fixtureGroupsArr.push($(fixtureGroup));
           found = true;
@@ -483,9 +475,26 @@
     handleMessage = function(ev) {
       return console.log('Handling WS message');
     };
-    window.ws.init({
-      onmessage: handleMessage
-    });
+    connectInterval = void 0;
+    initConnection = function() {
+      return window.ws.init({
+        onmessage: handleMessage,
+        onopen: function() {
+          console.log('connected');
+          $('.overlay').hide();
+          window.clearInterval(connectInterval);
+          return connectInterval = void 0;
+        },
+        onclose: function() {
+          console.log('disconnected');
+          $('.overlay').show();
+          if (connectInterval == null) {
+            return connectInterval = window.setInterval(initConnection, 2000);
+          }
+        }
+      });
+    };
+    initConnection();
     $(window).on('dimmer:change', function() {
       console.log('Sending new values');
       return window.ws.send(valuesJSON());
