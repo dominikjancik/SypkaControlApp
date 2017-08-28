@@ -92,7 +92,7 @@ fixtureChCount = (fixture) ->
 
 processValue = (segment, ch, value) ->
   if !mode
-    if segment.type == 'column' then return Math.min value, 0.5
+    # if segment.type == 'column' then return Math.min value, 0.5
     return value
 
   # console.log segment.type

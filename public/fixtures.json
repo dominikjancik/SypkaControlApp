@@ -183,7 +183,7 @@
       "segments": [
         {
           "x": 50,
-          "y": 155,
+          "y": 105,
           "z": -10,
           "rotX": -180,
           "rotY": -225,
@@ -221,7 +221,7 @@
       "segments": [
         {
           "x": 50,
-          "y": 105,
+          "y": 155,
           "z": -10,
           "rotX": -180,
           "rotY": -225,
@@ -506,6 +506,25 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
+          "flags": []
+        }
+      ]
+    },
+    "B12 Schody": {
+      "ip": "71",
+      "name": "B12 Schody",
+      "group": "B12 Schody",
+      "segments": [
+        {
+          "x": 70,
+          "y": 260,
+          "z": 0,
+          "rotX": 0,
+          "rotY": 0,
+          "rotZ": 0,
+          "count": "1",
+          "type": "side",
+          "floor": "2",
           "flags": []
         }
       ]

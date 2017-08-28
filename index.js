@@ -112,9 +112,6 @@
 
   processValue = function(segment, ch, value) {
     if (!mode) {
-      if (segment.type === 'column') {
-        return Math.min(value, 0.5);
-      }
       return value;
     }
     switch (segment.type) {
