@@ -1,5 +1,5 @@
 (function() {
-  var artnets, fixture, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ip, ipValues, loadFixtures, loadValues, mode, name, options, paperboy, path, port, processValue, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, validatedIp, values, webroot, ws,
+  var IP_LOCAL, artnets, debugMode, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, loadFixtures, loadValues, mode, options, paperboy, path, port, processArguments, processValue, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
@@ -50,7 +50,6 @@
 
   loadFixtures = function() {
     var obj;
-    console.log((fs.readFileSync(__dirname + "/public/fixtures.json", 'utf8')).replace(/^\uFEFF/, ''));
     obj = JSON.parse((fs.readFileSync(__dirname + "/public/fixtures.json", 'utf8')).replace(/^\uFEFF/, ''));
     console.log('fixtures loaded');
     return obj.fixtures;
@@ -154,7 +153,6 @@
               for (j = m = ref2 = ch, ref3 = ch + cnt; ref2 <= ref3 ? m < ref3 : m > ref3; j = ref2 <= ref3 ? ++m : --m) {
                 ipValues[fixture.ip][j] = Math.round(processValue(segment, j, value) * 255);
               }
-              console.log(ipValues[fixture.ip]);
               results2.push(i++);
             }
             return results2;
@@ -228,33 +226,65 @@
 
   i = 0;
 
-  initOutput = function() {};
+  debugMode = false;
 
-  for (name in fixtures) {
-    fixture = fixtures[name];
-    validatedIp = (fixture.ip != null) && fixture.ip.length > 0 ? fixture.ip : 0;
-    ip = "192.168.8." + validatedIp;
-    options.host = ip;
-    console.log(options);
-    artnets[fixture.ip] = require('artnet')(options);
-  }
+  IP_LOCAL = '127.0.0.1';
+
+  processArguments = function() {
+    var localArg;
+    localArg = process.argv.indexOf('-debug');
+    if (localArg !== -1) {
+      debugMode = true;
+      if (process.argv[localArg + 1] != null) {
+        return IP_LOCAL = process.argv[localArg + 1];
+      }
+    }
+  };
+
+  initOutput = function() {
+    var fixture, ip, name, results, validatedIp;
+    console.log("Initializing output");
+    if (!debugMode) {
+      console.log("Output mode - Standard");
+      results = [];
+      for (name in fixtures) {
+        fixture = fixtures[name];
+        validatedIp = (fixture.ip != null) && fixture.ip.length > 0 ? fixture.ip : 0;
+        ip = "192.168.8." + validatedIp;
+        options.host = ip;
+        console.log(options);
+        results.push(artnets[fixture.ip] = require('artnet')(options));
+      }
+      return results;
+    } else {
+      console.log("Output mode - Local test");
+      console.log("Binding to IP " + IP_LOCAL);
+      ip = IP_LOCAL;
+      options.host = ip;
+      return artnets[ip] = require('artnet')(options);
+    }
+  };
 
   updateOutput = function() {
-    var results;
+    var fixture, name, results;
     results = [];
     for (name in fixtures) {
       fixture = fixtures[name];
       console.log(fixture.name);
-      results.push(artnets[fixture.ip].set(1, ipValues[fixture.ip]));
+      if (!debugMode) {
+        results.push(artnets[fixture.ip].set(1, ipValues[fixture.ip]));
+      } else {
+        results.push(artnets[IP_LOCAL].set(fixture.ip, 1, ipValues[fixture.ip]));
+      }
     }
     return results;
   };
 
-  console.log(values);
-
-  updateValues(values);
+  processArguments();
 
   initOutput();
+
+  updateValues(values);
 
   updateOutput();
 
