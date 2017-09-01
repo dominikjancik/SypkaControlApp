@@ -1,43 +1,5 @@
 ﻿{
   "fixtures": {
-    "C3 Tram 2": {
-      "ip": "",
-      "name": "C3 Tram 2",
-      "group": "C3 - Tramy",
-      "segments": [
-        {
-          "x": 40,
-          "y": 20,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "1",
-          "type": "beam",
-          "floor": "3",
-          "flags": []
-        }
-      ]
-    },
-    "C3 Tram 1": {
-      "ip": "",
-      "name": "C3 Tram 1",
-      "group": "C3 - Tramy",
-      "segments": [
-        {
-          "x": 40,
-          "y": 0,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "1",
-          "type": "beam",
-          "floor": "3",
-          "flags": []
-        }
-      ]
-    },
     "C2 Kruh Park C": {
       "ip": "24",
       "name": "C2 Kruh Park C",
@@ -760,25 +722,6 @@
           "count": "1",
           "type": "circle",
           "floor": "1",
-          "flags": []
-        }
-      ]
-    },
-    "Vytah": {
-      "ip": "40",
-      "name": "Vytah",
-      "group": "Vytah",
-      "segments": [
-        {
-          "x": 30,
-          "y": 280,
-          "z": 0,
-          "rotX": 0,
-          "rotY": 0,
-          "rotZ": 0,
-          "count": "1",
-          "type": "elevator",
-          "floor": "all",
           "flags": []
         }
       ]
