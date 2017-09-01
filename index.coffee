@@ -90,7 +90,7 @@ fixtureChCount = (fixture) ->
       console.log "Unknown type - #{fixture.type}"
       return 3
 
-processValue = (segment, ch, value) ->
+processValue = (segment, ch, value, flags) ->
   if !mode
     # if segment.type == 'column' then return Math.min value, 0.5
     return value
@@ -114,6 +114,8 @@ processValue = (segment, ch, value) ->
 updateIpValues = ->
   for name, valueArray of values
     fixture = getFixture name
+    console.log name
+    console.log fixture
   
     if !ipValues[fixture.ip]? then ipValues[fixture.ip] = []
 
@@ -121,11 +123,12 @@ updateIpValues = ->
     # console.log fixture.name
     for segment in fixture.segments
       for segI in [0...segment.count]
-        value = valueArray[i]
+        value = valueArray[i].v
+        flags = valueArray[i].f
         ch = fixtureCh segment, i
         cnt = fixtureChCount segment
         for j in [ch...ch+cnt]
-          ipValues[fixture.ip][j] = Math.round processValue(segment, j, value) * 255
+          ipValues[fixture.ip][j] = Math.round processValue(segment, j, value, flags) * 255
         # console.log ipValues[fixture.ip]
         i++
   

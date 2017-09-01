@@ -109,7 +109,7 @@
     }
   };
 
-  processValue = function(segment, ch, value) {
+  processValue = function(segment, ch, value, flags) {
     if (!mode) {
       return value;
     }
@@ -128,11 +128,13 @@
   };
 
   updateIpValues = function() {
-    var ch, cnt, fixture, i, j, name, results, segI, segment, value, valueArray;
+    var ch, cnt, fixture, flags, i, j, name, results, segI, segment, value, valueArray;
     results = [];
     for (name in values) {
       valueArray = values[name];
       fixture = getFixture(name);
+      console.log(name);
+      console.log(fixture);
       if (ipValues[fixture.ip] == null) {
         ipValues[fixture.ip] = [];
       }
@@ -147,11 +149,12 @@
             var l, m, ref1, ref2, ref3, results2;
             results2 = [];
             for (segI = l = 0, ref1 = segment.count; 0 <= ref1 ? l < ref1 : l > ref1; segI = 0 <= ref1 ? ++l : --l) {
-              value = valueArray[i];
+              value = valueArray[i].v;
+              flags = valueArray[i].f;
               ch = fixtureCh(segment, i);
               cnt = fixtureChCount(segment);
               for (j = m = ref2 = ch, ref3 = ch + cnt; ref2 <= ref3 ? m < ref3 : m > ref3; j = ref2 <= ref3 ? ++m : --m) {
-                ipValues[fixture.ip][j] = Math.round(processValue(segment, j, value) * 255);
+                ipValues[fixture.ip][j] = Math.round(processValue(segment, j, value, flags) * 255);
               }
               results2.push(i++);
             }

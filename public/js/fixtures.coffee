@@ -41,6 +41,7 @@ $(document).ready ->
 			name: 'NA'
 			index: 0
 			value: 0.5
+			flags: []
 			selected: false
 
 		_create: ->
@@ -61,6 +62,12 @@ $(document).ready ->
 			this.element.css
 				'background-color': getIntensityColor this.options.value
 
+			caption = ""
+			for flag in this.options.flags
+				caption += "#{flag} "
+
+			this.element.html = caption
+
 		_constrain: ( value ) ->
 			return Math.max(Math.min( value, 1 ), 0)
 
@@ -71,6 +78,14 @@ $(document).ready ->
 			this.options.value = this._constrain value
 			this._update()
 			this
+
+		flags: ( flags ) ->
+			if flags == undefined
+				return this.options.flags
+
+			this._update()
+			this
+
 
 		optionsObject: -> this.options
 
@@ -261,7 +276,8 @@ $(document).ready ->
 			for fg in fgs
 				fg.children('.fixture').each ->
 					# console.log values[i]
-					$(this).fixture('value', values[i]) # TODO move logic to fixtureGroup Widget
+					$(this).fixture('value', values[i].v) # TODO move logic to fixtureGroup Widget
+					$(this).fixture('flags', values[i].f)
 					console.log i
 					i++
 
@@ -431,10 +447,13 @@ $(document).ready ->
 			index = fixtureOptions.index
 			name = fixtureOptions.name
 			value = fixtureOptions.value
+			flags = fixtureOptions.flags
 
 			if values[ name ] == undefined then values[ name ] = []
 			# values[ name ][ index ] = value
-			values[ name ].push value
+			values[ name ].push
+				v: value
+				f: flags
 
 			# console.log $(this).fixture('optionsObject').value
 

@@ -45,6 +45,7 @@
         name: 'NA',
         index: 0,
         value: 0.5,
+        flags: [],
         selected: false
       },
       _create: function() {
@@ -59,10 +60,18 @@
         return this._update();
       },
       _update: function() {
+        var caption, flag, j, len, ref;
         console.log('fixture update');
-        return this.element.css({
+        this.element.css({
           'background-color': getIntensityColor(this.options.value)
         });
+        caption = "";
+        ref = this.options.flags;
+        for (j = 0, len = ref.length; j < len; j++) {
+          flag = ref[j];
+          caption += flag + " ";
+        }
+        return this.element.html = caption;
       },
       _constrain: function(value) {
         return Math.max(Math.min(value, 1), 0);
@@ -72,6 +81,13 @@
           return this.options.value;
         }
         this.options.value = this._constrain(value);
+        this._update();
+        return this;
+      },
+      flags: function(flags) {
+        if (flags === void 0) {
+          return this.options.flags;
+        }
         this._update();
         return this;
       },
@@ -267,7 +283,8 @@
           for (j = 0, len = fgs.length; j < len; j++) {
             fg = fgs[j];
             results1.push(fg.children('.fixture').each(function() {
-              $(this).fixture('value', values[i]);
+              $(this).fixture('value', values[i].v);
+              $(this).fixture('flags', values[i].f);
               console.log(i);
               return i++;
             }));
@@ -447,15 +464,19 @@
       var values;
       values = {};
       $('.fixture').fixture().each(function() {
-        var fixtureOptions, index, name, value;
+        var fixtureOptions, flags, index, name, value;
         fixtureOptions = $(this).fixture('optionsObject');
         index = fixtureOptions.index;
         name = fixtureOptions.name;
         value = fixtureOptions.value;
+        flags = fixtureOptions.flags;
         if (values[name] === void 0) {
           values[name] = [];
         }
-        return values[name].push(value);
+        return values[name].push({
+          v: value,
+          f: flags
+        });
       });
       console.log(values);
       return JSON.stringify({
