@@ -45,7 +45,7 @@ console.log 'paperboy on his round at http://localhost:' + port
 fs = require('fs');
 
 loadFixtures = ->
-  console.log (fs.readFileSync "#{__dirname}/public/fixtures.json", 'utf8').replace(/^\uFEFF/, '')
+  # console.log (fs.readFileSync "#{__dirname}/public/fixtures.json", 'utf8').replace(/^\uFEFF/, '')
   obj = JSON.parse (fs.readFileSync "#{__dirname}/public/fixtures.json", 'utf8').replace(/^\uFEFF/, '')
   console.log 'fixtures loaded'
   obj.fixtures
@@ -126,7 +126,7 @@ updateIpValues = ->
         cnt = fixtureChCount segment
         for j in [ch...ch+cnt]
           ipValues[fixture.ip][j] = Math.round processValue(segment, j, value) * 255
-        console.log ipValues[fixture.ip]
+        # console.log ipValues[fixture.ip]
         i++
   
 
@@ -178,22 +178,46 @@ options = host: '127.0.0.1'
 artnets = []
 i = 0
 
+debugMode = false;
+IP_LOCAL = '127.0.0.1'
+
+processArguments = ->
+  localArg = process.argv.indexOf '-debug'
+  if localArg != -1
+    debugMode = true
+    if process.argv[localArg + 1]? then IP_LOCAL = process.argv[localArg + 1]
+
 initOutput = ->
-for name, fixture of fixtures
-  validatedIp = if fixture.ip? && fixture.ip.length > 0 then fixture.ip else 0
-  ip = "192.168.8.#{validatedIp}"
-  options.host = ip
-  console.log options
-  artnets[fixture.ip] = require('artnet') options
+  console.log "Initializing output"
+  unless debugMode
+    console.log "Output mode - Standard"
+    for name, fixture of fixtures
+      validatedIp = if fixture.ip? && fixture.ip.length > 0 then fixture.ip else 0
+      ip = "192.168.8.#{validatedIp}"
+      options.host = ip
+      console.log options
+      artnets[fixture.ip] = require('artnet') options
+  else
+    console.log "Output mode - Local test"
+    console.log "Binding to IP #{IP_LOCAL}"
+    ip = IP_LOCAL
+    options.host = ip
+    artnets[ip] = require('artnet') options
 
 updateOutput = ->
   for name, fixture of fixtures
     console.log fixture.name
-    artnets[fixture.ip].set 1, ipValues[fixture.ip]
+    unless debugMode
+      artnets[fixture.ip].set 1, ipValues[fixture.ip]
+    else
+      artnets[IP_LOCAL].set fixture.ip, 1, ipValues[fixture.ip]
     # console.log fixture.ip
     # console.log ipValues[fixture.ip]
 
-console.log values
-updateValues values
+# console.log values
+
+processArguments()
+
 initOutput()
+updateValues values
 updateOutput()
