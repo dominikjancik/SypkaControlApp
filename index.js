@@ -1,5 +1,5 @@
 (function() {
-  var IP_LOCAL, artnets, debugMode, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, listScenes, loadFixtures, loadScene, loadValues, mode, options, paperboy, path, port, processArguments, processValue, saveScene, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
+  var IP_LOCAL, artnets, debugMode, deleteScene, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, listScenes, loadFixtures, loadScene, loadValues, mode, options, paperboy, path, port, processArguments, processValue, saveScene, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
@@ -89,6 +89,10 @@
 
   loadScene = function(name) {
     return loadValues("scenes/" + name);
+  };
+
+  deleteScene = function(name) {
+    return fs.unlinkSync("public/scenes/" + name);
   };
 
   listScenes = function() {
@@ -230,6 +234,9 @@
             break;
           case 'saveScene':
             saveScene(command.data);
+            break;
+          case 'deleteScene':
+            deleteScene(command.data);
             break;
           case 'listScenes':
             conn.sendText(JSON.stringify({

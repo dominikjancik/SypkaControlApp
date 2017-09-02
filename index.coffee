@@ -71,6 +71,9 @@ saveScene = ( name ) ->
 loadScene = ( name ) ->
   loadValues "scenes/#{name}"
 
+deleteScene = ( name ) ->
+  fs.unlinkSync "public/scenes/#{name}"
+
 listScenes = ->
   fs.readdirSync 'public/scenes' # TODO reconsider Sync variant
   
@@ -180,6 +183,8 @@ server = ws.createServer((conn) ->
           updateValues values
         when 'saveScene'
           saveScene command.data
+        when 'deleteScene'
+          deleteScene command.data
         when 'listScenes'
           conn.sendText JSON.stringify
             command: 'scenes'

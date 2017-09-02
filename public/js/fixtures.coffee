@@ -1,5 +1,8 @@
 $(document).ready ->  
 
+	createElement = ( elem ) ->
+		$(document.createElement elem)
+
 	container3d = $('#container')
 	fixtureGroups = []
 
@@ -300,12 +303,41 @@ $(document).ready ->
 		$('.scenes__list').html ''
 
 		for scene in scenes
-			li = $(document.createElement 'li')
-			li.html "<a href=\#>#{scene}</a>"
+			li = createElement 'li'
+			ul = createElement 'ul'
+
+			loadLi = createElement 'li'
+			loadAnchor = createElement 'a'
+			deleteLi = createElement 'li'
+			deleteAnchor = createElement 'a'
+
+			loadAnchor.attr
+				href: '#'
+
+			deleteAnchor.attr
+				href: '#'
+
+			loadAnchor.html scene
+			deleteAnchor.html 'X'
+
+			loadLi.append loadAnchor
+			deleteLi.append deleteAnchor
+			ul.append loadLi
+			ul.append deleteLi
+			li.append ul
+
+			ul.addClass 'scenes__list__scene'
+			loadLi.addClass 'scenes__list__scene__name'
+			deleteLi.addClass 'scenes__list__scene__delete'
+			
 			do -> # CoffeeScript scope hack :D
 				clickScene = scene
-				li.click ->
+				loadAnchor.click (ev) ->
+					ev.preventDefault()
 					loadScene clickScene
+				deleteAnchor.click (ev) ->
+					ev.preventDefault()
+					deleteScene clickScene
 			$('.scenes__list').append li
 
 		$('.scenes').show()
@@ -314,15 +346,26 @@ $(document).ready ->
 		console.log "Loading scene #{name}"
 		loadValues scene_json_url(name), ->
 			$(window).trigger 'dimmer:change'
-		$('.scenes').hide()
+		closeSceneList()
 
-	listScenes = ->
+	deleteScene = ( name ) ->
+		console.log "Deleting scene #{name}"
+		deleteSceneCommand name
+		closeSceneList()
+
+	listScenes = (ev) ->
+		ev.preventDefault()
 		listScenesCommand()
+
+	closeSceneList = (ev) ->
+		ev.preventDefault() if ev?
+		$('.scenes').hide()
 
 	$('#saveScene').click saveScene
 	$('#loadScene').click listScenes
+	$('#closeScenes').click closeSceneList
 
-	$('.scenes').hide()
+	closeSceneList()
 
 	# Navmap
 
@@ -575,6 +618,9 @@ $(document).ready ->
 
 	saveSceneCommand = ( name ) ->
 		sendCommand 'saveScene', name
+
+	deleteSceneCommand = ( name ) ->
+		sendCommand 'deleteScene', name
 
 	listScenesCommand = ->
 		sendCommand 'listScenes'

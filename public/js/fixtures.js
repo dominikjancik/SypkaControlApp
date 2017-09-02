@@ -1,6 +1,9 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearConnectInterval, clearPingInterval, clearSelection, connectInterval, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initPingInterval, invertSelection, listScenes, listScenesCommand, loadScene, loadValues, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, saveScene, saveSceneCommand, scene_json_url, selected, sendCommand, setDimmer, showFloor, showScenes, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
+    var add_fixture, allFixtures, clearConnectInterval, clearPingInterval, clearSelection, closeSceneList, connectInterval, container3d, createElement, deleteScene, deleteSceneCommand, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initPingInterval, invertSelection, listScenes, listScenesCommand, loadScene, loadValues, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, saveScene, saveSceneCommand, scene_json_url, selected, sendCommand, setDimmer, showFloor, showScenes, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
+    createElement = function(elem) {
+      return $(document.createElement(elem));
+    };
     container3d = $('#container');
     fixtureGroups = [];
     fixture_json_url = function() {
@@ -307,19 +310,44 @@
       return saveSceneCommand(name);
     };
     showScenes = function(scenes) {
-      var fn, j, len, li, scene;
+      var deleteAnchor, deleteLi, fn, j, len, li, loadAnchor, loadLi, scene, ul;
       $('.scenes__list').html('');
       fn = function() {
         var clickScene;
         clickScene = scene;
-        return li.click(function() {
+        loadAnchor.click(function(ev) {
+          ev.preventDefault();
           return loadScene(clickScene);
+        });
+        return deleteAnchor.click(function(ev) {
+          ev.preventDefault();
+          return deleteScene(clickScene);
         });
       };
       for (j = 0, len = scenes.length; j < len; j++) {
         scene = scenes[j];
-        li = $(document.createElement('li'));
-        li.html("<a href=\#>" + scene + "</a>");
+        li = createElement('li');
+        ul = createElement('ul');
+        loadLi = createElement('li');
+        loadAnchor = createElement('a');
+        deleteLi = createElement('li');
+        deleteAnchor = createElement('a');
+        loadAnchor.attr({
+          href: '#'
+        });
+        deleteAnchor.attr({
+          href: '#'
+        });
+        loadAnchor.html(scene);
+        deleteAnchor.html('X');
+        loadLi.append(loadAnchor);
+        deleteLi.append(deleteAnchor);
+        ul.append(loadLi);
+        ul.append(deleteLi);
+        li.append(ul);
+        ul.addClass('scenes__list__scene');
+        loadLi.addClass('scenes__list__scene__name');
+        deleteLi.addClass('scenes__list__scene__delete');
         fn();
         $('.scenes__list').append(li);
       }
@@ -330,14 +358,27 @@
       loadValues(scene_json_url(name), function() {
         return $(window).trigger('dimmer:change');
       });
-      return $('.scenes').hide();
+      return closeSceneList();
     };
-    listScenes = function() {
+    deleteScene = function(name) {
+      console.log("Deleting scene " + name);
+      deleteSceneCommand(name);
+      return closeSceneList();
+    };
+    listScenes = function(ev) {
+      ev.preventDefault();
       return listScenesCommand();
+    };
+    closeSceneList = function(ev) {
+      if (ev != null) {
+        ev.preventDefault();
+      }
+      return $('.scenes').hide();
     };
     $('#saveScene').click(saveScene);
     $('#loadScene').click(listScenes);
-    $('.scenes').hide();
+    $('#closeScenes').click(closeSceneList);
+    closeSceneList();
     updateOrigin = function() {
       var midX, midY;
       midX = $(window).width() / 2 + $(window).scrollLeft();
@@ -617,6 +658,9 @@
     };
     saveSceneCommand = function(name) {
       return sendCommand('saveScene', name);
+    };
+    deleteSceneCommand = function(name) {
+      return sendCommand('deleteScene', name);
     };
     listScenesCommand = function() {
       return sendCommand('listScenes');
