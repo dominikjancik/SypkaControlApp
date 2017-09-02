@@ -1,6 +1,6 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearConnectInterval, clearPingInterval, clearSelection, connectInterval, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initPingInterval, invertSelection, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, selected, setDimmer, showFloor, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
+    var add_fixture, allFixtures, clearConnectInterval, clearPingInterval, clearSelection, connectInterval, container3d, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initPingInterval, invertSelection, listScenes, listScenesCommand, loadScene, loadValues, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, saveScene, saveSceneCommand, scene_json_url, selected, sendCommand, setDimmer, showFloor, showScenes, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
     container3d = $('#container');
     fixtureGroups = [];
     fixture_json_url = function() {
@@ -8,6 +8,9 @@
     };
     values_json_url = function() {
       return 'values.json?t=' + (new Date()).getTime();
+    };
+    scene_json_url = function(filename) {
+      return ("scenes/" + filename + "?t=") + (new Date()).getTime();
     };
     getIntensityColor = function(value) {
       var colorValue;
@@ -51,17 +54,13 @@
       _create: function() {
         this.element.addClass('fixture');
         this.element.click(this, function(ev) {
-          console.log('fixture click');
-          console.log(ev);
           ev.data.options.selected = !ev.data.options.selected;
-          console.log(ev.data.options.selected);
           return ev.data.element.toggleClass('selected', ev.data.options.selected);
         });
         return this._update();
       },
       _update: function() {
         var caption, flag, j, len, ref;
-        console.log('fixture update');
         this.element.css({
           'background-color': getIntensityColor(this.options.value)
         });
@@ -266,34 +265,33 @@
       }
       return fixtureGroupsArr;
     };
-    $.get(values_json_url(), function(data) {
-      var fg, fgs, i, name, results, values;
-      console.log('load');
-      console.log(data);
-      results = [];
-      for (name in data) {
-        values = data[name];
-        console.log(name);
-        fgs = getFixtureGroupsByName(name);
-        console.log(fgs);
-        i = 0;
-        results.push((function() {
-          var j, len, results1;
-          results1 = [];
+    loadValues = function(path, callback) {
+      if (callback == null) {
+        callback = void 0;
+      }
+      return $.get(path, function(data) {
+        var fg, fgs, i, j, len, name, values;
+        console.log('load');
+        console.log(data);
+        for (name in data) {
+          values = data[name];
+          fgs = getFixtureGroupsByName(name);
+          i = 0;
           for (j = 0, len = fgs.length; j < len; j++) {
             fg = fgs[j];
-            results1.push(fg.children('.fixture').each(function() {
+            fg.children('.fixture').each(function() {
               $(this).fixture('value', values[i].v);
               $(this).fixture('flags', values[i].f);
-              console.log(i);
               return i++;
-            }));
+            });
           }
-          return results1;
-        })());
-      }
-      return results;
-    });
+        }
+        if (callback != null) {
+          return callback();
+        }
+      });
+    };
+    loadValues(values_json_url());
     $('#floor1').click(function() {
       return showFloor(1);
     });
@@ -303,6 +301,43 @@
     $('#floor3').click(function() {
       return showFloor(3);
     });
+    saveScene = function() {
+      var name;
+      name = prompt('Scene name');
+      return saveSceneCommand(name);
+    };
+    showScenes = function(scenes) {
+      var fn, j, len, li, scene;
+      $('.scenes__list').html('');
+      fn = function() {
+        var clickScene;
+        clickScene = scene;
+        return li.click(function() {
+          return loadScene(clickScene);
+        });
+      };
+      for (j = 0, len = scenes.length; j < len; j++) {
+        scene = scenes[j];
+        li = $(document.createElement('li'));
+        li.html("<a href=\#>" + scene + "</a>");
+        fn();
+        $('.scenes__list').append(li);
+      }
+      return $('.scenes').show();
+    };
+    loadScene = function(name) {
+      console.log("Loading scene " + name);
+      loadValues(scene_json_url(name), function() {
+        return $(window).trigger('dimmer:change');
+      });
+      return $('.scenes').hide();
+    };
+    listScenes = function() {
+      return listScenesCommand();
+    };
+    $('#saveScene').click(saveScene);
+    $('#loadScene').click(listScenes);
+    $('.scenes').hide();
     updateOrigin = function() {
       var midX, midY;
       midX = $(window).width() / 2 + $(window).scrollLeft();
@@ -320,8 +355,6 @@
       posElem = $('.navmap__position');
       topPercent = $(window).scrollTop() / ($(document).height() - $(window).height());
       top = (mapElem.height() - posElem.height()) * topPercent;
-      console.log(topPercent);
-      console.log(top);
       return posElem.css({
         top: top + "px"
       });
@@ -330,8 +363,6 @@
     navDrag = false;
     navmapMove = function(ev) {
       var clickY, mapElem, posElem, top, topPercent;
-      console.log('click');
-      console.log(ev);
       mapElem = $('.navmap');
       posElem = $('.navmap__position');
       clickY = ev.originalEvent.y - mapElem.position().top;
@@ -478,7 +509,6 @@
           f: flags
         });
       });
-      console.log(values);
       return JSON.stringify({
         values: values,
         command: 'values'
@@ -494,10 +524,15 @@
       return saveAs(blob, 'values.json');
     });
     handleMessage = function(ev) {
+      var reply;
       console.log('Handling WS message');
-      switch (JSON.parse(ev.data).command) {
+      console.log(ev.data);
+      reply = JSON.parse(ev.data);
+      switch (reply.command) {
         case 'pong':
           return wsPongReceived();
+        case 'scenes':
+          return showScenes(reply.data);
       }
     };
     connectInterval = void 0;
@@ -570,6 +605,21 @@
           return initConnectInterval();
         }
       });
+    };
+    sendCommand = function(command, data) {
+      if (data == null) {
+        data = {};
+      }
+      return window.ws.send(JSON.stringify({
+        command: command,
+        data: data
+      }));
+    };
+    saveSceneCommand = function(name) {
+      return sendCommand('saveScene', name);
+    };
+    listScenesCommand = function() {
+      return sendCommand('listScenes');
     };
     initConnection();
     $(window).on('dimmer:change', function() {

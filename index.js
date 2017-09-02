@@ -1,5 +1,5 @@
 (function() {
-  var IP_LOCAL, artnets, debugMode, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, loadFixtures, loadValues, mode, options, paperboy, path, port, processArguments, processValue, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
+  var IP_LOCAL, artnets, debugMode, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, listScenes, loadFixtures, loadScene, loadValues, mode, options, paperboy, path, port, processArguments, processValue, saveScene, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
@@ -55,9 +55,12 @@
     return obj.fixtures;
   };
 
-  loadValues = function() {
+  loadValues = function(from) {
     var obj;
-    obj = JSON.parse((fs.readFileSync(__dirname + "/public/values.json", 'utf8')).replace(/^\uFEFF/, ''));
+    if (from == null) {
+      from = "values";
+    }
+    obj = JSON.parse((fs.readFileSync(__dirname + "/public/" + from + ".json", 'utf8')).replace(/^\uFEFF/, ''));
     console.log('values loaded');
     return obj;
   };
@@ -66,12 +69,30 @@
 
   values = loadValues();
 
-  saveValues = function() {
+  saveValues = function(to) {
     var output;
+    if (to == null) {
+      to = "values";
+    }
     output = JSON.stringify(values, null, 2);
     if (output != null) {
-      return fs.writeFileSync(__dirname + "/public/values.json", output);
+      return fs.writeFileSync(__dirname + "/public/" + to + ".json", output);
     }
+  };
+
+
+  /* Scene handling */
+
+  saveScene = function(name) {
+    return saveValues("scenes/" + name);
+  };
+
+  loadScene = function(name) {
+    return loadValues("scenes/" + name);
+  };
+
+  listScenes = function() {
+    return fs.readdirSync('public/scenes');
   };
 
   ipValues = [];
@@ -206,6 +227,15 @@
           case 'mode':
             switchMode();
             updateValues(values);
+            break;
+          case 'saveScene':
+            saveScene(command.data);
+            break;
+          case 'listScenes':
+            conn.sendText(JSON.stringify({
+              command: 'scenes',
+              data: listScenes()
+            }));
         }
       } catch (error) {
         err = error;

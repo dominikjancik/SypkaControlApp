@@ -50,17 +50,31 @@ loadFixtures = ->
   console.log 'fixtures loaded'
   obj.fixtures
 
-loadValues = ->
-  obj = JSON.parse (fs.readFileSync "#{__dirname}/public/values.json", 'utf8').replace(/^\uFEFF/, '')
+loadValues = ( from = "values" ) ->
+  obj = JSON.parse (fs.readFileSync "#{__dirname}/public/#{from}.json", 'utf8').replace(/^\uFEFF/, '')
   console.log 'values loaded'
   obj
 
 fixtures = loadFixtures()
 values = loadValues()
 
-saveValues = ->
+saveValues = ( to = "values" ) ->
   output = JSON.stringify values, null, 2
-  if output? then fs.writeFileSync "#{__dirname}/public/values.json", output
+  if output? then fs.writeFileSync "#{__dirname}/public/#{to}.json", output
+
+
+### Scene handling ###
+
+saveScene = ( name ) ->
+  saveValues "scenes/#{name}"
+
+loadScene = ( name ) ->
+  loadValues "scenes/#{name}"
+
+listScenes = ->
+  fs.readdirSync 'public/scenes' # TODO reconsider Sync variant
+  
+
 
 ipValues = []
 
@@ -164,6 +178,12 @@ server = ws.createServer((conn) ->
         when 'mode'
           switchMode()
           updateValues values
+        when 'saveScene'
+          saveScene command.data
+        when 'listScenes'
+          conn.sendText JSON.stringify
+            command: 'scenes'
+            data: listScenes()
     catch err
       console.log 'Failed parsing command: ' + err
     return

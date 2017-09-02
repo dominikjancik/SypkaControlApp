@@ -9,6 +9,9 @@ $(document).ready ->
 	values_json_url = ->
 		'values.json?t=' + (new Date()).getTime()
 
+	scene_json_url = ( filename ) ->
+		"scenes/#{filename}?t=" + (new Date()).getTime()
+
 	getIntensityColor = ( value ) ->
 		colorValue = Math.round(255 * value)
 		"rgb(#{colorValue}, #{colorValue}, #{colorValue})"
@@ -48,16 +51,13 @@ $(document).ready ->
 			this.element.addClass 'fixture'
 
 			this.element.click this, (ev) ->
-				console.log 'fixture click'
-				console.log ev
 				ev.data.options.selected = !ev.data.options.selected
-				console.log ev.data.options.selected
 				ev.data.element.toggleClass 'selected', ev.data.options.selected
 
 			this._update()
 
 		_update: ->
-			console.log 'fixture update'
+			# console.log 'fixture update'
 
 			this.element.css
 				'background-color': getIntensityColor this.options.value
@@ -151,8 +151,6 @@ $(document).ready ->
 		this.data segment
 
 		this.updateTransform = ->
-			# console.log 'update transform'
-			# console.log this.data()
 			this.css
 				transform: "translate3d(#{this.data().x}vw, #{this.data().y}vw, #{this.data().z}vw) rotateX(#{this.data().rotX}deg) rotateY(#{this.data().rotY}deg) rotateZ(#{this.data().rotZ}deg)"
 
@@ -264,26 +262,26 @@ $(document).ready ->
 
 		fixtureGroupsArr
 
-	$.get values_json_url(), (data) ->
-		console.log 'load'
-		console.log data
-		for name, values of data
-			console.log name
-			fgs = getFixtureGroupsByName name
-			console.log fgs
-			i = 0
+	loadValues = ( path, callback = undefined ) ->
+		$.get path, ( data ) ->
+			console.log 'load'
+			console.log data
+			for name, values of data
+				# console.log name
+				fgs = getFixtureGroupsByName name
+				# console.log fgs
+				i = 0
 
-			for fg in fgs
-				fg.children('.fixture').each ->
-					# console.log values[i]
-					$(this).fixture('value', values[i].v) # TODO move logic to fixtureGroup Widget
-					$(this).fixture('flags', values[i].f)
-					console.log i
-					i++
+				for fg in fgs
+					fg.children('.fixture').each ->
+						# console.log values[i]
+						$(this).fixture('value', values[i].v) # TODO move logic to fixtureGroup Widget
+						$(this).fixture('flags', values[i].f)
+						i++
 
-			# console.log 'loaded values'
-			# TODO LOAD VALUES INTO FIXTURES			
+			callback() if callback?
 
+	loadValues values_json_url()
 
 	$('#floor1').click ->
 		showFloor 1
@@ -292,6 +290,41 @@ $(document).ready ->
 	$('#floor3').click ->
 		showFloor 3
 
+	# Scene management
+
+	saveScene = ->
+		name = prompt 'Scene name'
+		saveSceneCommand name
+
+	showScenes = ( scenes ) ->
+		$('.scenes__list').html ''
+
+		for scene in scenes
+			li = $(document.createElement 'li')
+			li.html "<a href=\#>#{scene}</a>"
+			do -> # CoffeeScript scope hack :D
+				clickScene = scene
+				li.click ->
+					loadScene clickScene
+			$('.scenes__list').append li
+
+		$('.scenes').show()
+
+	loadScene = ( name ) ->
+		console.log "Loading scene #{name}"
+		loadValues scene_json_url(name), ->
+			$(window).trigger 'dimmer:change'
+		$('.scenes').hide()
+
+	listScenes = ->
+		listScenesCommand()
+
+	$('#saveScene').click saveScene
+	$('#loadScene').click listScenes
+
+	$('.scenes').hide()
+
+	# Navmap
 
 	updateOrigin = ->
 		midX = $(window).width() / 2 + $(window).scrollLeft()
@@ -308,9 +341,6 @@ $(document).ready ->
 		topPercent = $(window).scrollTop() / ($(document).height() - $(window).height())
 		top = (mapElem.height() - posElem.height()) * topPercent
 
-		console.log topPercent
-		console.log top
-
 		posElem.css
 			top: "#{top}px"
 
@@ -318,11 +348,6 @@ $(document).ready ->
 	navDrag = false;
 
 	navmapMove = (ev) ->
-		# if !navDrag then return
-
-		console.log 'click'
-		console.log ev
-
 		mapElem = $('.navmap')
 		posElem = $('.navmap__position')
 		clickY = ev.originalEvent.y - mapElem.position().top
@@ -457,7 +482,7 @@ $(document).ready ->
 
 			# console.log $(this).fixture('optionsObject').value
 
-		console.log values
+		# console.log values
 
 		return JSON.stringify
 			values: values
@@ -474,8 +499,11 @@ $(document).ready ->
 	# WS Communication
 	handleMessage = (ev) ->
 		console.log 'Handling WS message'
-		switch JSON.parse(ev.data).command
+		console.log ev.data
+		reply = JSON.parse(ev.data)
+		switch reply.command
 			when 'pong' then wsPongReceived()
+			when 'scenes' then showScenes reply.data
 
 
 	connectInterval = undefined
@@ -539,6 +567,18 @@ $(document).ready ->
 				$('.overlay').show()
 				clearPingInterval()
 				initConnectInterval()
+
+	sendCommand = ( command, data = {} ) ->
+		window.ws.send JSON.stringify
+			command: command
+			data: data
+
+	saveSceneCommand = ( name ) ->
+		sendCommand 'saveScene', name
+
+	listScenesCommand = ->
+		sendCommand 'listScenes'
+
 
 	initConnection()
 

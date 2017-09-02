@@ -18,6 +18,8 @@ input[type="button"] {
     width: 32%; }
   input[type="button"].selection {
     width: 32%; }
+  input[type="button"].scene {
+    width: 49%; }
 
 .navmap {
   width: 10vw;
@@ -179,5 +181,15 @@ input[type='range']:active::-webkit-slider-thumb {
   background: rgba(0, 0, 0, 0.5);
   top: 0;
   left: 0; }
+
+.scenes {
+  z-index: 4000;
+  transform: translate3d(0, 0, 900vw);
+  position: fixed;
+  top: 5vh;
+  left: 5vw;
+  width: 90vw;
+  height: 90vh;
+  background: #fff; }
 
 /*# sourceMappingURL=overview.css.map */
