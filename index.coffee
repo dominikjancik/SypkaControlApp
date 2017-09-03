@@ -110,26 +110,32 @@ fixtureChCount = (fixture) ->
 ### FLAGS ###
 # TODO move to its own files?
 
-oFlag = ( type, ch, value ) ->
-  switch type
+oFlag = ( vi ) ->
+  switch vi.segment.type
     when 'strip'
-      return (if (((ch - 1) %% 3) != 0) then value else 0)
+      return (if (((vi.ch - 1) %% 3) != 0) then vi.value else 0)
     when 'column'
-      return (if ((ch %% 6) == 0 || (ch %% 6) == 5) then value else 0)
+      return (if ((vi.ch %% 6) == 0 || (vi.ch %% 6) == 5) then vi.value else 0)
     when 'side', 'beam'
-      return (if ((ch %% 6) == 3 || (ch %% 6) == 2) then value else 0)
+      return (if ((vi.ch %% 6) == 3 || (vi.ch %% 6) == 2) then vi.value else 0)
     when 'circle'
-      return (if (ch == 1) then value else 0)
+      return (if (vi.ch == 1) then vi.value else 0)
 
-  return value
+  return vi.value
 
 ### END FLAGS ###
 
-processValue = (segment, ch, value, flags) ->
+processValue = (segment, i, ch, value, flags) ->
   flagsSet = new Set( flags )
   type = segment.type
 
-  value = oFlag type, ch, value if flagsSet.has('o')   
+  ### vi =
+    segment: segment
+    i: i
+    ch: ch
+    value: value
+
+  value = oFlag vi if flagsSet.has('o') ###
 
   return value
 
