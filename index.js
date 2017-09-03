@@ -1,5 +1,5 @@
 (function() {
-  var IP_LOCAL, artnets, debugMode, deleteScene, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, listScenes, loadFixtures, loadScene, loadValues, mode, options, paperboy, path, port, processArguments, processValue, saveScene, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
+  var IP_LOCAL, artnets, debugMode, deleteScene, fixtureCh, fixtureChCount, fixtures, fs, getFixture, http, i, initOutput, ipValues, listScenes, loadFixtures, loadScene, loadValues, mode, oFlag, options, paperboy, path, port, processArguments, processValue, saveScene, saveValues, server, switchMode, updateIpValues, updateOutput, updateValues, values, webroot, ws,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
@@ -134,11 +134,11 @@
     }
   };
 
-  processValue = function(segment, ch, value, flags) {
-    if (!mode) {
-      return value;
-    }
-    switch (segment.type) {
+
+  /* FLAGS */
+
+  oFlag = function(type, ch, value) {
+    switch (type) {
       case 'strip':
         return ((modulo(ch - 1, 3)) !== 0 ? value : 0);
       case 'column':
@@ -148,6 +148,19 @@
         return ((modulo(ch, 6)) === 3 || (modulo(ch, 6)) === 2 ? value : 0);
       case 'circle':
         return (ch === 1 ? value : 0);
+    }
+    return value;
+  };
+
+
+  /* END FLAGS */
+
+  processValue = function(segment, ch, value, flags) {
+    var flagsSet, type;
+    flagsSet = new Set(flags);
+    type = segment.type;
+    if (flagsSet.has('o')) {
+      value = oFlag(type, ch, value);
     }
     return value;
   };

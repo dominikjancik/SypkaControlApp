@@ -107,15 +107,11 @@ fixtureChCount = (fixture) ->
       console.log "Unknown type - #{fixture.type}"
       return 3
 
-processValue = (segment, ch, value, flags) ->
-  if !mode
-    # if segment.type == 'column' then return Math.min value, 0.5
-    return value
+### FLAGS ###
+# TODO move to its own files?
 
-  # console.log segment.type
-  # console.log ch
-
-  switch segment.type
+oFlag = ( type, ch, value ) ->
+  switch type
     when 'strip'
       return (if (((ch - 1) %% 3) != 0) then value else 0)
     when 'column'
@@ -127,6 +123,15 @@ processValue = (segment, ch, value, flags) ->
 
   return value
 
+### END FLAGS ###
+
+processValue = (segment, ch, value, flags) ->
+  flagsSet = new Set( flags )
+  type = segment.type
+
+  value = oFlag type, ch, value if flagsSet.has('o')   
+
+  return value
 
 updateIpValues = ->
   for name, valueArray of values

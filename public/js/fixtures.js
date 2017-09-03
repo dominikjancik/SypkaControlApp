@@ -1,6 +1,7 @@
 (function() {
   $(document).ready(function() {
-    var add_fixture, allFixtures, clearConnectInterval, clearPingInterval, clearSelection, closeSceneList, connectInterval, container3d, createElement, deleteScene, deleteSceneCommand, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initPingInterval, invertSelection, listScenes, listScenesCommand, loadScene, loadValues, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, saveScene, saveSceneCommand, scene_json_url, selected, sendCommand, setDimmer, showFloor, showScenes, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
+    var FLAGS, addFlag, add_fixture, allFixtures, clearConnectInterval, clearFlags, clearPingInterval, clearSelection, closeSceneList, connectInterval, container3d, createElement, deleteScene, deleteSceneCommand, fixtureGroups, fixture_json_url, getBaseData, getFixtureGroupsByName, getIntensityColor, getSegmentData, handleMessage, initConnectInterval, initConnection, initFlags, initPingInterval, invertSelection, listScenes, listScenesCommand, loadScene, loadValues, navDrag, navlock, navmapClick, navmapDown, navmapMove, navmapUp, pingInterval, pingReceived, pingSent, rotateSelected, rotateSelectedOnKey, saveScene, saveSceneCommand, scene_json_url, selected, sendCommand, setDimmer, showFloor, showScenes, translateSelected, translateSelectedOnKey, updateNavmap, updateOrigin, valuesJSON, values_json_url, wsPing, wsPingHandle, wsPongReceived;
+    FLAGS = ['o', 'down', 'up'];
     createElement = function(elem) {
       return $(document.createElement(elem));
     };
@@ -51,7 +52,7 @@
         name: 'NA',
         index: 0,
         value: 0.5,
-        flags: [],
+        flags: new Set(),
         selected: false
       },
       _create: function() {
@@ -68,12 +69,13 @@
           'background-color': getIntensityColor(this.options.value)
         });
         caption = "";
-        ref = this.options.flags;
+        ref = Array.from(this.options.flags);
         for (j = 0, len = ref.length; j < len; j++) {
           flag = ref[j];
+          console.log(caption);
           caption += flag + " ";
         }
-        return this.element.html = caption;
+        return this.element.html(caption);
       },
       _constrain: function(value) {
         return Math.max(Math.min(value, 1), 0);
@@ -88,8 +90,25 @@
       },
       flags: function(flags) {
         if (flags === void 0) {
-          return this.options.flags;
+          return Array.from(this.options.flags);
         }
+        this.options.flags = new Set(flags);
+        this._update();
+        return this;
+      },
+      addFlag: function(flag) {
+        console.log("Adding " + flag);
+        this.options.flags.add(flag);
+        this._update();
+        return this;
+      },
+      deleteFlag: function(flag) {
+        this.options.flags["delete"](flag);
+        this._update();
+        return this;
+      },
+      clearFlags: function() {
+        this.options.flags.clear();
         this._update();
         return this;
       },
@@ -222,6 +241,37 @@
       fixtures.fixture('value', value);
       return $(window).trigger('dimmer:change');
     };
+    addFlag = function(flag) {
+      var fixtures;
+      fixtures = selected();
+      fixtures.fixture('addFlag', flag);
+      return $(window).trigger('dimmer:change');
+    };
+    clearFlags = function() {
+      var fixtures;
+      console.log('Clearing flags');
+      fixtures = selected();
+      fixtures.fixture('clearFlags');
+      return $(window).trigger('dimmer:change');
+    };
+    initFlags = function() {
+      var flag, flagButton, flagsContainer, fn, j, len;
+      flagsContainer = $('#flags');
+      flagButton = $('#flags input');
+      fn = function() {
+        var scopedFlag;
+        scopedFlag = flag;
+        return flagButton.clone().val(flag).click(function() {
+          return addFlag(scopedFlag);
+        }).appendTo(flagsContainer);
+      };
+      for (j = 0, len = FLAGS.length; j < len; j++) {
+        flag = FLAGS[j];
+        fn();
+      }
+      return $('#flagsClear').click(clearFlags);
+    };
+    initFlags();
     $('#reset').click(clearSelection);
     $('#invert').click(invertSelection);
     $('.dimmer').dimmer();
@@ -229,6 +279,9 @@
       var value;
       value = ev.target.value;
       return setDimmer(value / 100);
+    });
+    $("#mode").click(function() {
+      return addFlag('o');
     });
     $(document).bind('keydown', 'esc', clearSelection);
     showFloor = function(floor) {
@@ -541,7 +594,7 @@
         index = fixtureOptions.index;
         name = fixtureOptions.name;
         value = fixtureOptions.value;
-        flags = fixtureOptions.flags;
+        flags = Array.from(fixtureOptions.flags);
         if (values[name] === void 0) {
           values[name] = [];
         }
@@ -666,14 +719,9 @@
       return sendCommand('listScenes');
     };
     initConnection();
-    $(window).on('dimmer:change', function() {
+    return $(window).on('dimmer:change', function() {
       console.log('Sending new values');
       return window.ws.send(valuesJSON());
-    });
-    return $("#mode").click(function() {
-      return window.ws.send(JSON.stringify({
-        command: 'mode'
-      }));
     });
   });
 

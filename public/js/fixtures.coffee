@@ -1,5 +1,7 @@
 $(document).ready ->  
 
+	FLAGS = [ 'o', 'down', 'up' ]
+
 	createElement = ( elem ) ->
 		$(document.createElement elem)
 
@@ -47,7 +49,7 @@ $(document).ready ->
 			name: 'NA'
 			index: 0
 			value: 0.5
-			flags: []
+			flags: new Set()
 			selected: false
 
 		_create: ->
@@ -66,10 +68,11 @@ $(document).ready ->
 				'background-color': getIntensityColor this.options.value
 
 			caption = ""
-			for flag in this.options.flags
+			for flag in Array.from this.options.flags
+				console.log caption
 				caption += "#{flag} "
 
-			this.element.html = caption
+			this.element.html(caption)
 
 		_constrain: ( value ) ->
 			return Math.max(Math.min( value, 1 ), 0)
@@ -84,11 +87,28 @@ $(document).ready ->
 
 		flags: ( flags ) ->
 			if flags == undefined
-				return this.options.flags
+				return Array.from this.options.flags
+
+			this.options.flags = new Set( flags )
 
 			this._update()
 			this
 
+		addFlag: ( flag ) ->
+			console.log "Adding #{flag}"
+			this.options.flags.add flag
+			this._update()
+			this
+
+		deleteFlag: ( flag ) ->
+			this.options.flags.delete flag
+			this._update()
+			this
+
+		clearFlags: ->
+			this.options.flags.clear()
+			this._update()
+			this
 
 		optionsObject: -> this.options
 
@@ -218,6 +238,34 @@ $(document).ready ->
 		fixtures.fixture('value', value)
 		$(window).trigger 'dimmer:change'# TODO move this to fixtures? (all need to be handled at once though)
 
+	addFlag = ( flag ) ->
+		fixtures = selected()
+		fixtures.fixture('addFlag', flag)
+		$(window).trigger 'dimmer:change' # TODO separate event for flags?
+
+	clearFlags = ->
+		console.log 'Clearing flags'
+		fixtures = selected()
+		fixtures.fixture('clearFlags')
+		$(window).trigger 'dimmer:change' # TODO separate event for flags?
+
+	initFlags = ->
+		flagsContainer = $('#flags')
+		flagButton = $('#flags input')
+
+		for flag in FLAGS
+			do ->
+				scopedFlag = flag
+				flagButton
+					.clone()
+					.val(flag)
+					.click ->
+						addFlag scopedFlag
+					.appendTo flagsContainer
+
+		$('#flagsClear').click clearFlags
+		
+	initFlags()
 
 	$('#reset').click clearSelection
 	$('#invert').click invertSelection
@@ -226,7 +274,8 @@ $(document).ready ->
 		value = ev.target.value
 		setDimmer value / 100
 
-		
+	$("#mode").click ->
+		addFlag 'o'		
 
 	$(document).bind 'keydown', 'esc', clearSelection
 
@@ -515,7 +564,7 @@ $(document).ready ->
 			index = fixtureOptions.index
 			name = fixtureOptions.name
 			value = fixtureOptions.value
-			flags = fixtureOptions.flags
+			flags = Array.from fixtureOptions.flags
 
 			if values[ name ] == undefined then values[ name ] = []
 			# values[ name ][ index ] = value
@@ -523,7 +572,7 @@ $(document).ready ->
 				v: value
 				f: flags
 
-			# console.log $(this).fixture('optionsObject').value
+			# console.log $(this).fixture('optionsObject').flags
 
 		# console.log values
 
@@ -633,9 +682,9 @@ $(document).ready ->
 		console.log 'Sending new values'
 		window.ws.send valuesJSON()
 
-	$("#mode").click ->
-		window.ws.send JSON.stringify
-			command: 'mode'
+	#$("#mode").click ->
+	#	window.ws.send JSON.stringify
+	#		command: 'mode'
 
 
 
