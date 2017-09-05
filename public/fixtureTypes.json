@@ -1,0 +1,32 @@
+{
+	"fixtureTypes": {
+		"strip": {
+			"size": {
+				"x": 10,
+				"y": 15
+			},
+			"channels": 3
+		},
+		"column": {
+			"size": {
+				"x": 20,
+				"y": 15
+			},
+			"channels": 6
+		},
+		"side": {
+			"size": {
+				"x": 5,
+				"y": 15
+			},
+			"channels": 6
+		},
+		"circle": {
+			"size": {
+				"x": 20,
+				"y": 20
+			},
+			"channels": 2
+		}
+	}
+}

@@ -15,6 +15,7 @@
     "longjohn": "^0.2.12",
     "node-static": "^0.7.9",
     "nodejs-websocket": "^1.7.1",
-    "paperboy": "0.0.5"
+    "paperboy": "0.0.5",
+    "transformation-matrix-js": "^2.7.1"
   }
 }

@@ -50,6 +50,11 @@ loadFixtures = ->
   console.log 'fixtures loaded'
   obj.fixtures
 
+loadFixtureTypes = ->
+  obj = JSON.parse (fs.readFileSync "#{__dirname}/public/fixtureTypes.json", 'utf8').replace(/^\uFEFF/, '')
+  console.log 'fixture types loaded'
+  obj.fixtureTypes
+
 loadValues = ( from = "values" ) ->
   obj = JSON.parse (fs.readFileSync "#{__dirname}/public/#{from}.json", 'utf8').replace(/^\uFEFF/, '')
   console.log 'values loaded'
@@ -57,6 +62,7 @@ loadValues = ( from = "values" ) ->
 
 fixtures = loadFixtures()
 values = loadValues()
+fixtureTypes = loadFixtureTypes()
 
 saveValues = ( to = "values" ) ->
   output = JSON.stringify values, null, 2
@@ -64,6 +70,8 @@ saveValues = ( to = "values" ) ->
 
 
 ### Scene handling ###
+
+Matrix = require("transformation-matrix-js").Matrix;
 
 saveScene = ( name ) ->
   saveValues "scenes/#{name}"
@@ -107,71 +115,132 @@ fixtureChCount = (fixture) ->
       console.log "Unknown type - #{fixture.type}"
       return 3
 
+# TODO per ip/universe
+valuesDirty = true
+isAnimated = false
+
+# TODO load from JSON
+animatedFlags = [ 'up', 'down' ]
+
+frameInterval = undefined
+frameTime = new Date().getTime()
+
 ### FLAGS ###
 # TODO move to its own files?
 
-oFlag = ( vi ) ->
-  switch vi.segment.type
-    when 'strip'
-      return (if (((vi.ch - 1) %% 3) != 0) then vi.value else 0)
-    when 'column'
-      return (if ((vi.ch %% 6) == 0 || (vi.ch %% 6) == 5) then vi.value else 0)
-    when 'side', 'beam'
-      return (if ((vi.ch %% 6) == 3 || (vi.ch %% 6) == 2) then vi.value else 0)
-    when 'circle'
-      return (if (vi.ch == 1) then vi.value else 0)
+valuePosSin = ( vi, speed ) ->
+  vi.value * Math.max(0.2, ((Math.sin(vi.pos.y / 15 + frameTime / 500 * speed)) / 2 + 0.5))
 
-  return vi.value
+flagProcessors =
+  o: ( vi ) ->
+    switch vi.segment.type
+      when 'strip'
+        return (if (((vi.ch - 1) %% 3) != 0) then vi.value else 0)
+      when 'column'
+        return (if ((vi.ch %% 6) == 0 || (vi.ch %% 6) == 5) then vi.value else 0)
+      when 'side', 'beam'
+        return (if ((vi.ch %% 6) == 3 || (vi.ch %% 6) == 2) then vi.value else 0)
+      when 'circle'
+        return (if (vi.ch == 1) then vi.value else 0)
+
+    return vi.value
+  down: ( vi ) ->
+    #return vi.value * ((frameTime / 1000) %% 1)
+    valuePosSin vi, -1
+  up: ( vi ) ->
+    valuePosSin vi, 1
 
 ### END FLAGS ###
 
-processValue = (segment, i, ch, value, flags) ->
-  flagsSet = new Set( flags )
+processValue = (segment, i, ch, value, flags, pos) ->
   type = segment.type
 
-  ### vi =
+  vi =
     segment: segment
     i: i
     ch: ch
     value: value
+    pos: pos
 
-  value = oFlag vi if flagsSet.has('o') ###
+  flags.forEach (flag) ->
+    vi.value = flagProcessors[flag] vi
+  #value = oFlag vi if flagsSet.has('o')
 
-  return value
+  return vi.value
+
+degreesToRadians = ( degrees ) ->
+  degrees / 180 * Math.PI
+
+getPosition = (segment, i) ->
+  # TODO precalculate positions on init
+  type = segment.type
+  sizeY = fixtureTypes[segment.type].size.y
+
+  m = new Matrix()
+  m.rotate(degreesToRadians segment.rotZ).translateY(sizeY * i)
+  offset = m.applyToPoint 0, 0
+  
+  ret =
+    x: segment.x + offset.x
+    y: segment.y + offset.y
+
 
 updateIpValues = ->
+  isAnimated = false
+  valuesDirty = false
+  
   for name, valueArray of values
     fixture = getFixture name
-    console.log name
-    console.log fixture
+    # console.log name
+    # console.log fixture
   
     if !ipValues[fixture.ip]? then ipValues[fixture.ip] = []
 
     i = 0
+
     # console.log fixture.name
     for segment in fixture.segments
       for segI in [0...segment.count]
         value = valueArray[i].v
-        flags = valueArray[i].f
+        flags = new Set valueArray[i].f
+
+        unless isAnimated
+          for flag in animatedFlags
+            if flags.has flag
+              isAnimated = true
+
         ch = fixtureCh segment, i
         cnt = fixtureChCount segment
+
+        # console.log "#{fixture.name}"
+        pos = getPosition segment, segI
+        # console.log "Segment part: #{segment.type}, #{segI}, {#{pos.x}, #{pos.y}}"
+
         for j in [ch...ch+cnt]
-          ipValues[fixture.ip][j] = Math.round processValue(segment, j, value, flags) * 255
+          lastValue = ipValues[fixture.ip][j]
+          ipValues[fixture.ip][j] = newValue = Math.round processValue(segment, segI, j, value, flags, pos) * 255
+          valuesDirty |= lastValue != newValue
         # console.log ipValues[fixture.ip]
         i++
   
+outputFrame = ->
+  frameTime = new Date().getTime()
+  console.log "Frame output #{frameTime}"
+
+  updateIpValues()
+  updateOutput()
+
+  if isAnimated
+    frameInterval = setInterval outputFrame, 50 if !frameInterval?
+  else
+    clearInterval frameInterval if frameInterval?
+    frameInterval = undefined
 
 updateValues = ( newValues ) ->
   console.log 'updating values'
   values = newValues
-  updateIpValues()
-  updateOutput()
+  outputFrame()
   saveValues()
-
-mode = false # TODO multiple modes
-switchMode = ->
-  console.log 'switching mode'
-  mode = !mode
 
 ### WS HANDLER ###
 
@@ -244,8 +313,10 @@ initOutput = ->
     artnets[ip] = require('artnet') options
 
 updateOutput = ->
+  return unless valuesDirty
+
   for name, fixture of fixtures
-    console.log fixture.name
+    # console.log fixture.name
     unless debugMode
       artnets[fixture.ip].set 1, ipValues[fixture.ip]
     else
@@ -259,4 +330,4 @@ processArguments()
 
 initOutput()
 updateValues values
-updateOutput()
+# updateOutput()
