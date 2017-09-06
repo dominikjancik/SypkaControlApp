@@ -1,5 +1,5 @@
 (function() {
-  var IP_LOCAL, Matrix, animatedFlags, artnets, debugMode, degreesToRadians, deleteScene, fixtureCh, fixtureChCount, fixtureTypes, fixtures, flagProcessors, frameInterval, frameTime, fs, getFixture, getPosition, http, i, initOutput, ipValues, isAnimated, listScenes, loadFixtureTypes, loadFixtures, loadScene, loadValues, options, outputFrame, paperboy, path, port, processArguments, processValue, saveScene, saveValues, server, updateIpValues, updateOutput, updateValues, valuePosSin, values, valuesDirty, webroot, ws,
+  var IP_LOCAL, Matrix, animatedFlags, artnets, debugMode, degreesToRadians, deleteScene, fixtureCh, fixtureChCount, fixtureTypes, fixtures, flagProcessors, frameInterval, frameTime, fs, getFixture, getPosition, http, i, initOutput, ipValues, isAnimated, listScenes, loadFixtureTypes, loadFixtures, loadScene, loadValues, options, outputFrame, paperboy, path, port, positions, processArguments, processValue, saveScene, saveValues, server, updateIpValues, updateOutput, updateValues, valuePosSin, values, valuesDirty, webroot, ws,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
@@ -208,23 +208,31 @@
     return degrees / 180 * Math.PI;
   };
 
-  getPosition = function(segment, i) {
-    var m, offset, ret, sizeY, type;
+  positions = [];
+
+  getPosition = function(segment, i, globalFixtureIndex) {
+    var m, offset, pos, sizeY, type;
+    pos = positions[globalFixtureIndex];
+    if (pos != null) {
+      return pos;
+    }
+    console.log("Calculating position for fixture #" + globalFixtureIndex);
     type = segment.type;
     sizeY = fixtureTypes[segment.type].size.y;
     m = new Matrix();
     m.rotate(degreesToRadians(segment.rotZ)).translateY(sizeY * i);
     offset = m.applyToPoint(0, 0);
-    return ret = {
+    return positions[globalFixtureIndex] = {
       x: segment.x + offset.x,
       y: segment.y + offset.y
     };
   };
 
   updateIpValues = function() {
-    var ch, cnt, fixture, flag, flags, i, j, lastValue, name, newValue, pos, results, segI, segment, value, valueArray;
+    var ch, cnt, fixture, fixtureIndex, flag, flags, globalFixtureIndex, i, j, lastValue, name, newValue, pos, results, segment, value, valueArray;
     isAnimated = false;
     valuesDirty = false;
+    globalFixtureIndex = 0;
     results = [];
     for (name in values) {
       valueArray = values[name];
@@ -242,7 +250,7 @@
           results1.push((function() {
             var l, len1, n, o, ref1, ref2, ref3, results2;
             results2 = [];
-            for (segI = l = 0, ref1 = segment.count; 0 <= ref1 ? l < ref1 : l > ref1; segI = 0 <= ref1 ? ++l : --l) {
+            for (fixtureIndex = l = 0, ref1 = segment.count; 0 <= ref1 ? l < ref1 : l > ref1; fixtureIndex = 0 <= ref1 ? ++l : --l) {
               value = valueArray[i].v;
               flags = new Set(valueArray[i].f);
               if (!isAnimated) {
@@ -255,13 +263,14 @@
               }
               ch = fixtureCh(segment, i);
               cnt = fixtureChCount(segment);
-              pos = getPosition(segment, segI);
+              pos = getPosition(segment, fixtureIndex, globalFixtureIndex);
               for (j = o = ref2 = ch, ref3 = ch + cnt; ref2 <= ref3 ? o < ref3 : o > ref3; j = ref2 <= ref3 ? ++o : --o) {
                 lastValue = ipValues[fixture.ip][j];
-                ipValues[fixture.ip][j] = newValue = Math.round(processValue(segment, segI, j, value, flags, pos) * 255);
+                ipValues[fixture.ip][j] = newValue = Math.round(processValue(segment, fixtureIndex, j, value, flags, pos) * 255);
                 valuesDirty |= lastValue !== newValue;
               }
-              results2.push(i++);
+              i++;
+              results2.push(globalFixtureIndex++);
             }
             return results2;
           })());
@@ -274,7 +283,6 @@
 
   outputFrame = function() {
     frameTime = new Date().getTime();
-    console.log("Frame output " + frameTime);
     updateIpValues();
     updateOutput();
     if (isAnimated) {

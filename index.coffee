@@ -171,8 +171,16 @@ processValue = (segment, i, ch, value, flags, pos) ->
 degreesToRadians = ( degrees ) ->
   degrees / 180 * Math.PI
 
-getPosition = (segment, i) ->
+positions = []
+
+getPosition = (segment, i, globalFixtureIndex) ->
   # TODO precalculate positions on init
+
+  pos = positions[globalFixtureIndex]
+  return pos if pos?
+
+  console.log "Calculating position for fixture ##{globalFixtureIndex}"
+
   type = segment.type
   sizeY = fixtureTypes[segment.type].size.y
 
@@ -180,7 +188,7 @@ getPosition = (segment, i) ->
   m.rotate(degreesToRadians segment.rotZ).translateY(sizeY * i)
   offset = m.applyToPoint 0, 0
   
-  ret =
+  positions[globalFixtureIndex] =
     x: segment.x + offset.x
     y: segment.y + offset.y
 
@@ -189,6 +197,8 @@ updateIpValues = ->
   isAnimated = false
   valuesDirty = false
   
+  globalFixtureIndex = 0
+
   for name, valueArray of values
     fixture = getFixture name
     # console.log name
@@ -200,7 +210,7 @@ updateIpValues = ->
 
     # console.log fixture.name
     for segment in fixture.segments
-      for segI in [0...segment.count]
+      for fixtureIndex in [0...segment.count]
         value = valueArray[i].v
         flags = new Set valueArray[i].f
 
@@ -213,19 +223,20 @@ updateIpValues = ->
         cnt = fixtureChCount segment
 
         # console.log "#{fixture.name}"
-        pos = getPosition segment, segI
-        # console.log "Segment part: #{segment.type}, #{segI}, {#{pos.x}, #{pos.y}}"
+        pos = getPosition segment, fixtureIndex, globalFixtureIndex
+        # console.log "Segment part: #{segment.type}, #{fixtureIndex}, {#{pos.x}, #{pos.y}}"
 
         for j in [ch...ch+cnt]
           lastValue = ipValues[fixture.ip][j]
-          ipValues[fixture.ip][j] = newValue = Math.round processValue(segment, segI, j, value, flags, pos) * 255
+          ipValues[fixture.ip][j] = newValue = Math.round processValue(segment, fixtureIndex, j, value, flags, pos) * 255
           valuesDirty |= lastValue != newValue
         # console.log ipValues[fixture.ip]
         i++
-  
+        globalFixtureIndex++
+
 outputFrame = ->
   frameTime = new Date().getTime()
-  console.log "Frame output #{frameTime}"
+  # console.log "Frame output #{frameTime}"
 
   updateIpValues()
   updateOutput()
