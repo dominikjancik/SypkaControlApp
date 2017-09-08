@@ -363,7 +363,7 @@
       return saveSceneCommand(name);
     };
     showScenes = function(scenes) {
-      var deleteAnchor, deleteLi, fn, j, len, li, loadAnchor, loadLi, scene, ul;
+      var deleteAnchor, deleteLi, fn, j, len, li, loadAnchor, loadLi, scene, strippedName, ul;
       $('.scenes__list').html('');
       fn = function() {
         var clickScene;
@@ -391,7 +391,8 @@
         deleteAnchor.attr({
           href: '#'
         });
-        loadAnchor.html(scene);
+        strippedName = scene.substring(0, scene.lastIndexOf('.json'));
+        loadAnchor.html(strippedName);
         deleteAnchor.html('X');
         loadLi.append(loadAnchor);
         deleteLi.append(deleteAnchor);
@@ -416,10 +417,13 @@
     deleteScene = function(name) {
       console.log("Deleting scene " + name);
       deleteSceneCommand(name);
-      return closeSceneList();
+      closeSceneList();
+      return listScenes();
     };
     listScenes = function(ev) {
-      ev.preventDefault();
+      if (ev != null) {
+        ev.preventDefault();
+      }
       return listScenesCommand();
     };
     closeSceneList = function(ev) {

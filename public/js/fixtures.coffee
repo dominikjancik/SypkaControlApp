@@ -366,7 +366,9 @@ $(document).ready ->
 			deleteAnchor.attr
 				href: '#'
 
-			loadAnchor.html scene
+			strippedName = scene.substring(0, scene.lastIndexOf('.json'))
+
+			loadAnchor.html strippedName
 			deleteAnchor.html 'X'
 
 			loadLi.append loadAnchor
@@ -401,9 +403,10 @@ $(document).ready ->
 		console.log "Deleting scene #{name}"
 		deleteSceneCommand name
 		closeSceneList()
+		listScenes()
 
 	listScenes = (ev) ->
-		ev.preventDefault()
+		ev.preventDefault() if ev?
 		listScenesCommand()
 
 	closeSceneList = (ev) ->

@@ -287,7 +287,7 @@
     updateOutput();
     if (isAnimated) {
       if (frameInterval == null) {
-        return frameInterval = setInterval(outputFrame, 50);
+        return frameInterval = setInterval(outputFrame, 40);
       }
     } else {
       if (frameInterval != null) {

@@ -242,7 +242,7 @@ outputFrame = ->
   updateOutput()
 
   if isAnimated
-    frameInterval = setInterval outputFrame, 50 if !frameInterval?
+    frameInterval = setInterval outputFrame, 40 if !frameInterval?
   else
     clearInterval frameInterval if frameInterval?
     frameInterval = undefined
