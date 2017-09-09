@@ -1,5 +1,5 @@
 (function() {
-  var IP_LOCAL, Matrix, animatedFlags, artnets, debugMode, degreesToRadians, deleteScene, fixtureCh, fixtureChCount, fixtureTypes, fixtures, flagProcessors, frameInterval, frameTime, fs, getFixture, getPosition, http, i, initOutput, ipValues, isAnimated, listScenes, loadFixtureTypes, loadFixtures, loadScene, loadValues, options, outputFrame, paperboy, path, port, positions, processArguments, processValue, saveScene, saveValues, server, updateIpValues, updateOutput, updateValues, valuePosSin, values, valuesDirty, webroot, ws,
+  var IP_LOCAL, Matrix, animatedFlags, artnets, debugMode, degreesToRadians, deleteScene, fixtureCh, fixtureChCount, fixtureTypes, fixtures, flagProcessors, frameDifference, frameInterval, frameTime, fs, getFixture, getPosition, http, i, initOutput, ipValues, ipValuesPrevious, isAnimated, lastFrameTime, lerp, listScenes, loadFixtureTypes, loadFixtures, loadScene, loadValues, options, outputFrame, paperboy, path, port, positions, processArguments, processValue, saveScene, saveValues, server, transition, updateIpValues, updateOutput, updateTime, updateValues, valuePosSin, values, valuesDirty, webroot, ws,
     modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
 
   if (process.env.NODE_ENV !== 'production') {
@@ -112,6 +112,8 @@
 
   ipValues = [];
 
+  ipValuesPrevious = [];
+
   getFixture = function(name) {
     return fixtures[name];
   };
@@ -154,6 +156,10 @@
   frameInterval = void 0;
 
   frameTime = new Date().getTime();
+
+  lastFrameTime = new Date().getTime();
+
+  frameDifference = 0;
 
 
   /* FLAGS */
@@ -228,8 +234,14 @@
     };
   };
 
+  transition = 0;
+
+  lerp = function(a, b, alpha) {
+    return a * (1 - alpha) + b * alpha;
+  };
+
   updateIpValues = function() {
-    var ch, cnt, fixture, fixtureIndex, flag, flags, globalFixtureIndex, i, j, lastValue, name, newValue, pos, results, segment, value, valueArray;
+    var ch, cnt, fixture, fixtureIndex, flag, flags, globalFixtureIndex, i, j, lastValue, name, newValue, pos, previousValue, results, segment, value, valueArray;
     isAnimated = false;
     valuesDirty = false;
     globalFixtureIndex = 0;
@@ -240,6 +252,9 @@
       if (ipValues[fixture.ip] == null) {
         ipValues[fixture.ip] = [];
       }
+      if (ipValuesPrevious[fixture.ip] == null) {
+        ipValuesPrevious[fixture.ip] = [];
+      }
       i = 0;
       results.push((function() {
         var k, len, ref, results1;
@@ -248,12 +263,15 @@
         for (k = 0, len = ref.length; k < len; k++) {
           segment = ref[k];
           results1.push((function() {
-            var l, len1, n, o, ref1, ref2, ref3, results2;
+            var l, len1, n, o, ref1, ref2, ref3, ref4, results2;
             results2 = [];
             for (fixtureIndex = l = 0, ref1 = segment.count; 0 <= ref1 ? l < ref1 : l > ref1; fixtureIndex = 0 <= ref1 ? ++l : --l) {
               value = valueArray[i].v;
               flags = new Set(valueArray[i].f);
               if (!isAnimated) {
+                if (transition < 1) {
+                  isAnimated = true;
+                }
                 for (n = 0, len1 = animatedFlags.length; n < len1; n++) {
                   flag = animatedFlags[n];
                   if (flags.has(flag)) {
@@ -266,7 +284,14 @@
               pos = getPosition(segment, fixtureIndex, globalFixtureIndex);
               for (j = o = ref2 = ch, ref3 = ch + cnt; ref2 <= ref3 ? o < ref3 : o > ref3; j = ref2 <= ref3 ? ++o : --o) {
                 lastValue = ipValues[fixture.ip][j];
-                ipValues[fixture.ip][j] = newValue = Math.round(processValue(segment, fixtureIndex, j, value, flags, pos) * 255);
+                previousValue = (ref4 = ipValuesPrevious[fixture.ip][j]) != null ? ref4 : 0;
+                newValue = Math.round(processValue(segment, fixtureIndex, j, value, flags, pos) * 255);
+                if (transition !== 1) {
+                  newValue = lerp(previousValue, newValue, transition);
+                } else {
+                  ipValuesPrevious[fixture.ip][j] = newValue;
+                }
+                ipValues[fixture.ip][j] = newValue;
                 valuesDirty |= lastValue !== newValue;
               }
               i++;
@@ -281,8 +306,17 @@
     return results;
   };
 
-  outputFrame = function() {
+  updateTime = function() {
     frameTime = new Date().getTime();
+    frameDifference = frameTime - lastFrameTime;
+    return lastFrameTime = frameTime;
+  };
+
+  outputFrame = function() {
+    updateTime();
+    transition += frameDifference / 3000;
+    transition = Math.min(transition, 1);
+    console.log("Transition " + transition);
     updateIpValues();
     updateOutput();
     if (isAnimated) {
@@ -300,6 +334,12 @@
   updateValues = function(newValues) {
     console.log('updating values');
     values = newValues;
+    updateTime();
+    if (transition === 1) {
+      transition = 0;
+    } else {
+      transition = 1;
+    }
     outputFrame();
     return saveValues();
   };

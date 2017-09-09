@@ -88,6 +88,7 @@ listScenes = ->
 
 
 ipValues = []
+ipValuesPrevious = []
 
 getFixture = (name) ->
   # TODO converge values and fixtures JSON files, fixture names as keys
@@ -124,6 +125,8 @@ animatedFlags = [ 'up', 'down' ]
 
 frameInterval = undefined
 frameTime = new Date().getTime()
+lastFrameTime = new Date().getTime()
+frameDifference = 0
 
 ### FLAGS ###
 # TODO move to its own files?
@@ -192,6 +195,10 @@ getPosition = (segment, i, globalFixtureIndex) ->
     x: segment.x + offset.x
     y: segment.y + offset.y
 
+transition = 0;
+
+lerp = (a, b, alpha) ->
+  a * (1 - alpha) + b * alpha
 
 updateIpValues = ->
   isAnimated = false
@@ -205,6 +212,7 @@ updateIpValues = ->
     # console.log fixture
   
     if !ipValues[fixture.ip]? then ipValues[fixture.ip] = []
+    if !ipValuesPrevious[fixture.ip]? then ipValuesPrevious[fixture.ip] = []
 
     i = 0
 
@@ -215,6 +223,7 @@ updateIpValues = ->
         flags = new Set valueArray[i].f
 
         unless isAnimated
+          isAnimated = true if transition < 1
           for flag in animatedFlags
             if flags.has flag
               isAnimated = true
@@ -228,15 +237,34 @@ updateIpValues = ->
 
         for j in [ch...ch+cnt]
           lastValue = ipValues[fixture.ip][j]
-          ipValues[fixture.ip][j] = newValue = Math.round processValue(segment, fixtureIndex, j, value, flags, pos) * 255
+          previousValue = ipValuesPrevious[fixture.ip][j] ? 0
+
+          newValue = Math.round processValue(segment, fixtureIndex, j, value, flags, pos) * 255
+          
+          unless transition == 1
+            newValue = lerp previousValue, newValue, transition
+          else
+            ipValuesPrevious[fixture.ip][j] = newValue  
+          
+          ipValues[fixture.ip][j] = newValue
+
           valuesDirty |= lastValue != newValue
         # console.log ipValues[fixture.ip]
         i++
         globalFixtureIndex++
 
-outputFrame = ->
+updateTime = ->
   frameTime = new Date().getTime()
   # console.log "Frame output #{frameTime}"
+  frameDifference = frameTime - lastFrameTime
+  lastFrameTime = frameTime
+
+outputFrame = ->
+  updateTime()
+
+  transition += frameDifference / 3000
+  transition = Math.min(transition, 1)
+  console.log "Transition #{transition}"
 
   updateIpValues()
   updateOutput()
@@ -250,6 +278,11 @@ outputFrame = ->
 updateValues = ( newValues ) ->
   console.log 'updating values'
   values = newValues
+  updateTime()
+  if transition == 1
+    transition = 0
+  else
+    transition = 1
   outputFrame()
   saveValues()
 
